@@ -21,4 +21,21 @@
         android:text="download from usb"
         android:onClick="downloadFromUsb"/>
 
+    <Button
+        android:id="@+id/takeImageButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="200dp"
+        android:text="photo" />
+
+    <ImageView
+        android:id="@+id/newPhotoImageView"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="41dp" />
 </RelativeLayout>
