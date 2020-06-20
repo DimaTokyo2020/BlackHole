@@ -1,17 +1,15 @@
 package com.DK.blackhole.model;
-
+/*
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import java.io.Serializable;
+*/
 
 
+public class Image //implements Serializable {
+{
 
-@Entity
-public class Image implements Serializable {
-
-    @PrimaryKey
-    @NonNull
     public String id;
     public String name;
     public String size;
@@ -23,11 +21,24 @@ public class Image implements Serializable {
     public String comments;
     long lastUpdated;
     //public String imgUrl;
-    //public Boolean isChecked;
+    public Boolean isChecked;
 
 
-    public Image() { }
+    //public Image() { }
 
+
+    public Image(String id, String name, String size, boolean isChecked) {
+        this.id = id;
+        this.name = name;
+        if(size != null) {
+            this.size = size;
+        }else{
+            this.size = "none";
+        }
+        this.isChecked = isChecked;
+
+    }
+/*
     public Image(String id, String name, String size, String height, String width, String time_stamp, String user_uploaded
             , String event, String comments) {
 
@@ -97,5 +108,5 @@ public class Image implements Serializable {
 
     //public Boolean getChecked() { return isChecked; }
 
-
+*/
 }
