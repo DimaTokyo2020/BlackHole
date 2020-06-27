@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".Fragments.MainFragment"
+    android:padding="5dp">
 
 
-
+<!--
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -20,6 +21,7 @@
         android:layout_marginTop="200dp"
         android:text="download from usb"
         android:onClick="downloadFromUsb"/>
+-->
 
     <Button
         android:id="@+id/takeImageButton"
@@ -31,6 +33,13 @@
         android:layout_marginTop="200dp"
         android:text="photo" />
 
+    <Button
+        android:id="@+id/openImageListFragmentBTN"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Show all images"
+        android:layout_marginTop="350dp"/>
+
     <ImageView
         android:id="@+id/newPhotoImageView"
         android:layout_width="100dp"
@@ -38,4 +47,4 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="41dp" />
-</RelativeLayout>
+</FrameLayout>

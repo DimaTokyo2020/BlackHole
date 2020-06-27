@@ -1,24 +1,28 @@
-package com.DK.blackhole;
+package com.DK.blackhole.Fragments;
+
 
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
+import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+
+import com.DK.blackhole.R;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -29,61 +33,81 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
-import java.net.UnknownHostException;
 
 import jcifs.smb.NtlmPasswordAuthentication;
 import jcifs.smb.SmbException;
 import jcifs.smb.SmbFile;
 import jcifs.smb.SmbFileOutputStream;
 
+
 /**
- * https://abhiandroid.com/programming/camera
- * */
+ * A simple {@link Fragment} subclass.
+ */
+public class MainFragment extends Fragment {
 
-
-public class MainActivity extends AppCompatActivity {
     private static final int CAMERA_REQUEST = 1888;
-    TextView text,text1;
     private static final int MY_CAMERA_PERMISSION_CODE = 100;
-    //Bitmap photo;
-    String photo;
-    private SQLiteDatabase db;
-    Bitmap theImage;
-    Activity activity;
-    ImageView newPhotoImageView;
+    private final String TAG = MainFragment.class.getSimpleName();
+    private NavController navCtrl;
+
+    private View mView;
+    private Bitmap theImage;
+    private Activity activity;
+    private ImageView newPhotoImageView;
+
+
+
+    public MainFragment() {
+        // Required empty public constructor
+    }
+
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        verifyStoragePermissions(this);
-        activity = this;
-        newPhotoImageView = findViewById(R.id.newPhotoImageView);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        mView = inflater.inflate(R.layout.fragment_main, container, false);
+        verifyStoragePermissions(getActivity());
+        activity = getActivity();
+        newPhotoImageView = mView.findViewById(R.id.newPhotoImageView);
+        navCtrl = Navigation.findNavController(getActivity(), R.id.home_nav_host);
 
 
         if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
         {
-            Log.i("dima", "request");
+            Log.i("TAG", "request");
             ActivityCompat.requestPermissions(activity,new String[]{Manifest.permission.CAMERA}, MY_CAMERA_PERMISSION_CODE);
         }
 
-        Button cameraButton = findViewById(R.id.takeImageButton);
-        cameraButton.setOnClickListener(new View.OnClickListener() {
+
+
+        (mView.findViewById(R.id.takeImageButton)).setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onClick(View v) {
+                Log.i("TAG", "intent");
+                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(cameraIntent, CAMERA_REQUEST);
+            }
 
-                    Log.i("dima", "intent");
-                    Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                    startActivityForResult(cameraIntent, CAMERA_REQUEST);
-                }
+        });
+        (mView.findViewById(R.id.openImageListFragmentBTN)).setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.M)
+            @Override
+            public void onClick(View v) {
+                Log.i(TAG, "opening ImagesListFragment");
+                navCtrl.navigate(R.id.action_global_imagesListFragment);
+            }
 
         });
 
 
 
 
+        return mView;
     }
+
+
 
 
     // Storage Permissions
@@ -103,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
      *
      * @param activity
      */
-    public static void verifyStoragePermissions(Activity activity) {
+    private static void verifyStoragePermissions(Activity activity) {
         // Check if we have write permission
         int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
@@ -184,15 +208,7 @@ public class MainActivity extends AppCompatActivity {
 
                     smbfos.write("testing....and writing to a file".getBytes());
                     System.out.println("completed ...nice !");
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                } catch (UnknownHostException e) {
-                    e.printStackTrace();
-                } catch (SmbException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                } catch (IOException e) { e.printStackTrace(); }
 
                 /*
         //String ftpUrl = "ftp://%s:%s@%s/%s;type=i";
@@ -210,24 +226,24 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             URL url = new URL("ftp://dima:dima@//10.0.0.138/Cruzer%20Blade-1/x.txt");
-            Log.i("dima","1");
+            Log.i("TAG","1");
             URLConnection conn = url.openConnection();
-            Log.i("dima","2");
+            Log.i("TAG","2");
             InputStream inputStream = conn.getInputStream();
-            Log.i("dima","3");
+            Log.i("TAG","3");
             FileOutputStream outputStream = new FileOutputStream(savePath);
-            Log.i("dima","4");
+            Log.i("TAG","4");
             byte[] buffer = new byte[BUFFER_SIZE];
             int bytesRead = -1;
             while ((bytesRead = inputStream.read(buffer)) != -1) {
-                Log.i("dima","5");
+                Log.i("TAG","5");
                 outputStream.write(buffer, 0, bytesRead);
             }
 
             outputStream.close();
             inputStream.close();
 
-            Log.i("dima","File downloaded");
+            Log.i("TAG","File downloaded");
         } catch (IOException ex) {
             ex.printStackTrace();
         }*/
@@ -236,7 +252,7 @@ public class MainActivity extends AppCompatActivity {
         t.start();
     }
 
-    void yeah() {
+    private void yeah() {
         SmbFile[] domains;
         try {
             domains = (new SmbFile("smb://")).listFiles();
@@ -244,15 +260,10 @@ public class MainActivity extends AppCompatActivity {
                 System.out.println(domains[i]);
                 SmbFile[] servers = domains[i].listFiles();
                 for (int j = 0; j < servers.length; j++) {
-                    Log.i("dima","\t" + servers[j]);
+                    Log.i("TAG","\t" + servers[j]);
                 }
             }
-        } catch (SmbException e) {
-            e.printStackTrace();
-        } catch (
-                MalformedURLException e) {
-            e.printStackTrace();
-        }
+        } catch (SmbException | MalformedURLException e) { e.printStackTrace(); }
     }
 
 
@@ -287,7 +298,6 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+
+
 }
-
-
-

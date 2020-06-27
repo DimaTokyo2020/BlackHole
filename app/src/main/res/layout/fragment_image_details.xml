@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/background_light"
-    tools:context=".ImageDetailsFragment">
+    tools:context=".Fragments.ImageDetailsFragment">
 
     <ImageView
         android:id="@+id/imageView"
@@ -52,4 +52,14 @@
         android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/image_details_id_tv" />
+
+    <Button
+        android:id="@+id/closeDetailsImageFragmentBTN"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/image_details_cb" />
 </androidx.constraintlayout.widget.ConstraintLayout>

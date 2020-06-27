@@ -7,8 +7,9 @@ import java.io.Serializable;
 */
 
 
-public class Image //implements Serializable {
-{
+import java.io.Serializable;
+
+public class Image implements Serializable {
 
     public String id;
     public String name;

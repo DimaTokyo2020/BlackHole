@@ -6,7 +6,7 @@ import android.os.AsyncTask;
 
 import androidx.lifecycle.LiveData;
 
-import com.DK.blackhole.MyApplication;
+import com.DK.blackhole.App;
 
 import java.util.List;
 
@@ -34,7 +34,7 @@ public class ImageModel {
     }
 
     public void refreshImageList(final CompListener listener){
-        long lastUpdated = MyApplication.context.getSharedPreferences("TAG",MODE_PRIVATE).getLong("ImagesLastUpdateDate",0);
+        long lastUpdated = App.context.getSharedPreferences("TAG",MODE_PRIVATE).getLong("ImagesLastUpdateDate",0);
         ImageFirebase.getAllImagesSince(lastUpdated,new Listener<List<Image>>() {
             @SuppressLint("StaticFieldLeak")
             @Override
@@ -47,7 +47,7 @@ public class ImageModel {
                             AppLocalDb.db.ImageDao().insertAll(s);
                             if (s.lastUpdated > lastUpdated) lastUpdated = s.lastUpdated;
                         }
-                        SharedPreferences.Editor edit = MyApplication.context.getSharedPreferences("TAG", MODE_PRIVATE).edit();
+                        SharedPreferences.Editor edit = App.context.getSharedPreferences("TAG", MODE_PRIVATE).edit();
                         edit.putLong("ImagesLastUpdateDate",lastUpdated);
                         edit.commit();
                         return "";

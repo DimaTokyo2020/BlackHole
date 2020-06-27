@@ -1,4 +1,4 @@
-package com.DK.blackhole;
+package com.DK.blackhole.Fragments;
 
 
 import android.content.Context;
@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.DK.blackhole.R;
 import com.DK.blackhole.model.Image;
 import com.DK.blackhole.model.Model;
 
@@ -29,15 +30,15 @@ import java.util.List;
  */
 public class ImagesListFragment extends Fragment {
 
-    RecyclerView list;
-    List<Image> data;
-    ImagesListAdapter adapter;
+    private RecyclerView list;
+    private List<Image> data;
+    private ImagesListAdapter adapter;
 
-    interface Delegate{
+    public interface Delegate{
         void onItemSelected(Image image);
     }
 
-    Delegate parent;
+    private Delegate parent;
 
     void setTitle(String title){
 
@@ -76,7 +77,7 @@ public class ImagesListFragment extends Fragment {
 
         adapter = new ImagesListAdapter();
         list.setAdapter(adapter);
-        /**next 3 lines give space between the items in the recyclerView**/
+        //next 3 lines give space between the items in the recyclerView
         DividerItemDecoration itemDecorator = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
         itemDecorator.setDrawable(ContextCompat.getDrawable(getContext(), R.drawable.divider_item_decorator_custom));
         list.addItemDecoration(itemDecorator);
@@ -119,7 +120,7 @@ public class ImagesListFragment extends Fragment {
         ImageView imageIV;
 
 
-        public ImageRowViewHolder(@NonNull View itemView, final OnItemClickListener listener) {
+        private ImageRowViewHolder(@NonNull View itemView, final OnItemClickListener listener) {
             super(itemView);
             name = itemView.findViewById(R.id.row_name_tv);
             id = itemView.findViewById(R.id.row_id_tv);
@@ -146,7 +147,7 @@ public class ImagesListFragment extends Fragment {
 
         }
 
-        public void bind(Image st) {
+        private void bind(Image st) {
             name.setText(st.name);
             id.setText(st.id);
             cb.setChecked(st.isChecked);
@@ -171,8 +172,8 @@ public class ImagesListFragment extends Fragment {
         @Override
         public ImageRowViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
             View v = LayoutInflater.from(getActivity()).inflate(R.layout.list_row, viewGroup,false );
-            ImageRowViewHolder vh = new ImageRowViewHolder(v, listener);
-            return vh;
+            //ImageRowViewHolder vh = new ImageRowViewHolder(v, listener);
+            return new ImageRowViewHolder(v, listener);
         }
 
         @Override

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/mainFragment">
+
+    <fragment
+        android:id="@+id/imagesListFragment"
+        android:name="com.DK.blackhole.Fragments.ImagesListFragment"
+        android:label="Images"
+        tools:layout="@layout/fragment_images_list">
+        <action
+            android:id="@+id/action_imagesListFragment_to_imageDetailsFragment"
+            app:destination="@id/imageDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/imageDetailsFragment"
+        android:name="com.DK.blackhole.Fragments.ImageDetailsFragment"
+        android:label="fragment_image_details"
+        tools:layout="@layout/fragment_image_details" >
+        <argument
+            android:name="Image"
+            app:argType="com.DK.blackhole.model.Image" />
+    </fragment>
+    <action android:id="@+id/action_global_imageDetailsFragment" app:destination="@id/imageDetailsFragment" />
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.DK.blackhole.Fragments.MainFragment"
+        android:label="fragment_main"
+        tools:layout="@layout/fragment_main" >
+        <action
+            android:id="@+id/action_mainFragment_to_imagesListFragment"
+            app:destination="@id/imagesListFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_cameraFragment"
+            app:destination="@id/cameraFragment" />
+    </fragment><action android:id="@+id/action_global_imagesListFragment" app:destination="@id/imagesListFragment"/>
+    <action android:id="@+id/action_global_mainFragment" app:destination="@id/mainFragment" />
+    <fragment
+        android:id="@+id/cameraFragment"
+        android:name="com.DK.blackhole.Fragments.CameraFragment"
+        android:label="fragment_camera"
+        tools:layout="@layout/fragment_camera" />
+    <action android:id="@+id/action_global_cameraFragment" app:destination="@id/cameraFragment" />
+</navigation>
