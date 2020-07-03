@@ -1,7 +1,8 @@
-package com.DK.blackhole.Fragments;
+package com.dk.blackhole.Fragments;
 
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,13 +13,15 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
-import com.DK.blackhole.R;
-import com.DK.blackhole.model.Image;
+
+import com.dk.blackhole.R;
+import com.dk.blackhole.model.Image;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class ImageDetailsFragment extends Fragment {
+    private final String TAG = ImageDetailsFragment.class.getSimpleName();
     private Image image;
     private TextView name;
     private TextView id;
@@ -35,8 +38,13 @@ public class ImageDetailsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_image_details, container, false);
 
         initUIElements(view);
-
-        image = ImageDetailsFragmentArgs.fromBundle(getArguments()).getImage();//here we receive the image from imagesList
+        Bundle arguments = getArguments();
+        if(arguments != null) {
+            image = ImageDetailsFragmentArgs.fromBundle(arguments).getImage();//here we receive the image from imagesList
+        }
+        else {
+            Log.e(TAG, "onCreateView arguments = null");
+        }
 
         if (image != null){
             update_display();
@@ -60,8 +68,8 @@ public class ImageDetailsFragment extends Fragment {
     }
 
     private void update_display() {
-        name.setText(image.name);
-        id.setText(image.id);
+        name.setText(image.getName());
+        id.setText(image.getId());
     }
 
     public void setImage(Image image) {

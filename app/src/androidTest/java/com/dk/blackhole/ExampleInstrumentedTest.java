@@ -1,4 +1,4 @@
-package com.DK.blackhole;
+package com.dk.blackhole;
 
 import android.content.Context;
 import androidx.test.platform.app.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
 
-        assertEquals("com.DK.blackhole", appContext.getPackageName());
+        assertEquals("com.dk.blackhole", appContext.getPackageName());
     }
 }

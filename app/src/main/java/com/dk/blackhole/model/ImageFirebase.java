@@ -1,4 +1,4 @@
-package com.DK.blackhole.model;
+package com.dk.blackhole.model;
 /*
 import android.util.Log;
 

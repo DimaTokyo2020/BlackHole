@@ -1,4 +1,4 @@
-package com.DK.blackhole.Fragments;
+package com.dk.blackhole.Fragments;
 
 
 import android.app.Activity;
@@ -14,7 +14,9 @@ import android.widget.ImageView;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.DK.blackhole.R;
+import com.dk.blackhole.R;
+
+import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -41,15 +43,16 @@ public class CameraFragment extends Fragment {
 
         imageFromCameraIV = view.findViewById(R.id.imageFromCameraIV);
 
-
         return view;
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
-            imageFromCameraBM = (Bitmap) data.getExtras().get("data");
+
+            Objects.requireNonNull(imageFromCameraBM = (Bitmap) data.getExtras().get("data"));
             imageFromCameraIV.setImageBitmap(imageFromCameraBM);
+
 
             //photo=getEncodedString(theImage);
             //setDataToDataBase();

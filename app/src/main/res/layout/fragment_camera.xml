@@ -3,10 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragments.CameraFragment">
+    tools:context="com.dk.blackhole.Fragments.CameraFragment">
 
 
     <ImageView
+        android:contentDescription="@string/image"
         android:id="@+id/imageFromCameraIV"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

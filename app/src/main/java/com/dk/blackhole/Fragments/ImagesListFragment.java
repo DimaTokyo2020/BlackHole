@@ -1,4 +1,4 @@
-package com.DK.blackhole.Fragments;
+package com.dk.blackhole.Fragments;
 
 
 import android.content.Context;
@@ -18,21 +18,21 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.DK.blackhole.R;
-import com.DK.blackhole.model.Image;
-import com.DK.blackhole.model.Model;
+import com.dk.blackhole.R;
+import com.dk.blackhole.model.Image;
+import com.dk.blackhole.model.Model;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class ImagesListFragment extends Fragment {
 
     private RecyclerView list;
-    private List<Image> data;
+    private List<Image> mData  = new ArrayList<>();//to prevent null EXCEPTION
     private ImagesListAdapter adapter;
+    private Context mContext;
 
     public interface Delegate{
         void onItemSelected(Image image);
@@ -45,7 +45,15 @@ public class ImagesListFragment extends Fragment {
     }
 
     public ImagesListFragment() {
-        data = Model.instance.getAllImages();
+        Model.instance.getAllImages(new Model.Listener<List<Image>>(){
+            @Override
+            public void onComplete(List<Image> data) {
+                mData = data;
+                if(adapter != null){
+                    adapter.notifyDataSetChanged();//refresh the page with new data
+                }
+            }
+        });
     }
 
     /*
@@ -67,26 +75,26 @@ public class ImagesListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_images_list, container, false);
-
+        Objects.requireNonNull(mContext = getContext());
         list = view.findViewById(R.id.images_list_list);
         list.setHasFixedSize(true);
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        LinearLayoutManager layoutManager = new LinearLayoutManager(mContext);
         list.setLayoutManager(layoutManager);
 
 
         adapter = new ImagesListAdapter();
         list.setAdapter(adapter);
         //next 3 lines give space between the items in the recyclerView
-        DividerItemDecoration itemDecorator = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
-        itemDecorator.setDrawable(ContextCompat.getDrawable(getContext(), R.drawable.divider_item_decorator_custom));
+        DividerItemDecoration itemDecorator = new DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL);
+        itemDecorator.setDrawable(Objects.requireNonNull(ContextCompat.getDrawable(mContext, R.drawable.divider_item_decorator_custom)));
         list.addItemDecoration(itemDecorator);
 
         adapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onClick(int position) {
                 Log.d("TAG","row was clicked" + position);
-                Image image = data.get(position);
+                Image image = mData.get(position);
                 parent.onItemSelected(image);
             }
         });
@@ -128,8 +136,7 @@ public class ImagesListFragment extends Fragment {
             imageIV = itemView.findViewById(R.id.row_image);
             cb.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v) {
-                    image.isChecked = cb.isChecked();
+                public void onClick(View v) { image.setIsChecked(cb.isChecked());
                 }
             });
 
@@ -148,9 +155,9 @@ public class ImagesListFragment extends Fragment {
         }
 
         private void bind(Image st) {
-            name.setText(st.name);
-            id.setText(st.id);
-            cb.setChecked(st.isChecked);
+            name.setText(st.getName());
+            id.setText(st.getId());
+            cb.setChecked(st.getIsChecked());
             image = st;
         }
     }
@@ -178,14 +185,14 @@ public class ImagesListFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull ImageRowViewHolder imageRowViewHolder, int i) {
-            Image st = data.get(i);
+            Image st = mData.get(i);
             imageRowViewHolder.bind(st);
 
         }
 
         @Override
         public int getItemCount() {
-            return data.size();
+            return mData.size();
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.DK.blackhole.Fragments;
+package com.dk.blackhole.Fragments;
 
 
 import android.Manifest;
@@ -22,7 +22,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
-import com.DK.blackhole.R;
+import com.dk.blackhole.R;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
+import java.util.Objects;
 
 import jcifs.smb.NtlmPasswordAuthentication;
 import jcifs.smb.SmbException;
@@ -68,9 +69,10 @@ public class MainFragment extends Fragment {
         // Inflate the layout for this fragment
         mView = inflater.inflate(R.layout.fragment_main, container, false);
         verifyStoragePermissions(getActivity());
-        activity = getActivity();
+        Objects.requireNonNull(activity = getActivity());
         newPhotoImageView = mView.findViewById(R.id.newPhotoImageView);
-        navCtrl = Navigation.findNavController(getActivity(), R.id.home_nav_host);
+        navCtrl = Navigation.findNavController(activity, R.id.home_nav_host);
+
 
 
         if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
@@ -125,7 +127,7 @@ public class MainFragment extends Fragment {
      *
      * If the app does not has permission then the user will be prompted to grant permissions
      *
-     * @param activity
+     * @param activity/
      */
     private static void verifyStoragePermissions(Activity activity) {
         // Check if we have write permission
@@ -143,8 +145,8 @@ public class MainFragment extends Fragment {
 
     private void copyFile(String inputPath, String inputFile, String outputPath) {
 
-        InputStream in = null;
-        OutputStream out = null;
+        InputStream in;
+        OutputStream out;
         try {
 
             //create output directory if it doesn't exist
@@ -164,20 +166,14 @@ public class MainFragment extends Fragment {
                 out.write(buffer, 0, read);
             }
             in.close();
-            in = null;
+            //in = null;
 
             // write the output file (You have now copied the file)
             out.flush();
             out.close();
-            out = null;
+            //out = null;
 
-        }  catch (FileNotFoundException fnfe1) {
-            Log.e("tag", fnfe1.getMessage());
-        }
-        catch (Exception e) {
-            Log.e("tag", e.getMessage());
-        }
-
+        } catch (Exception e) { Log.e("tag", Objects.requireNonNull(e.getMessage())); }
     }
 
     public void copyThat(View view) {
@@ -202,7 +198,7 @@ public class MainFragment extends Fragment {
                 String sharedFolder="Cruzer Blade-1";
                 String path="smb://10.0.0.138/"+sharedFolder+"/x.txt";
                 NtlmPasswordAuthentication auth = new NtlmPasswordAuthentication("",user, pass);
-                SmbFile smbFile = null;
+                SmbFile smbFile;
                 try { smbFile = new SmbFile(path,auth);
                     SmbFileOutputStream smbfos = new SmbFileOutputStream(smbFile);
 
@@ -256,11 +252,11 @@ public class MainFragment extends Fragment {
         SmbFile[] domains;
         try {
             domains = (new SmbFile("smb://")).listFiles();
-            for (int i = 0; i < domains.length; i++) {
-                System.out.println(domains[i]);
-                SmbFile[] servers = domains[i].listFiles();
-                for (int j = 0; j < servers.length; j++) {
-                    Log.i("TAG","\t" + servers[j]);
+            for (SmbFile domain : domains) {
+                System.out.println(domain);
+                SmbFile[] servers = domain.listFiles();
+                for (SmbFile server : servers) {
+                    Log.i("TAG", "\t" + server);
                 }
             }
         } catch (SmbException | MalformedURLException e) { e.printStackTrace(); }
@@ -271,7 +267,9 @@ public class MainFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK)
         {
-            theImage = (Bitmap) data.getExtras().get("data");
+
+
+            theImage = (Bitmap) Objects.requireNonNull(data.getExtras().get("data"));
             newPhotoImageView.setImageBitmap(theImage);
 
             //photo=getEncodedString(theImage);

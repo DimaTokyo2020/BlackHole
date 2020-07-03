@@ -1,4 +1,4 @@
-package com.DK.blackhole.model;
+package com.dk.blackhole.model;
 
 import androidx.room.Dao;
 import androidx.room.Delete;
@@ -7,6 +7,14 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
 import java.util.List;
+
+/**
+ *  This class wrap the SQLite functionality
+ *
+ *  AlL the DB request are passing through this class
+ */
+
+
 
 @Dao
 public interface ImageDao {

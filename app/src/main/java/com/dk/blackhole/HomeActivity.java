@@ -1,4 +1,4 @@
-package com.DK.blackhole;
+package com.dk.blackhole;
 
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -13,9 +13,10 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
-import com.DK.blackhole.Fragments.ImagesListFragment;
-import com.DK.blackhole.Fragments.ImagesListFragmentDirections;
-import com.DK.blackhole.model.Image;
+import com.dk.blackhole.Fragments.ImagesListFragment;
+import com.dk.blackhole.Fragments.ImagesListFragmentDirections;
+import com.dk.blackhole.NavGraphDirections;
+import com.dk.blackhole.model.Image;
 import com.google.android.material.navigation.NavigationView;
 
 public class HomeActivity extends AppCompatActivity  implements ImagesListFragment.Delegate, NavigationView.OnNavigationItemSelectedListener {

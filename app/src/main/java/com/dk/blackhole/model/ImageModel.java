@@ -1,4 +1,4 @@
-package com.DK.blackhole.model;
+package com.dk.blackhole.model;
 /*
 import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
@@ -6,7 +6,7 @@ import android.os.AsyncTask;
 
 import androidx.lifecycle.LiveData;
 
-import com.DK.blackhole.App;
+import com.dk.blackhole.App;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.DK.blackhole;
+package com.dk.blackhole;
 
 import org.junit.Test;
 
