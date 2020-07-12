@@ -9,8 +9,9 @@
     <string name="show_all_images">Show all images</string>
     <string name="image">Image</string>
     <string name="sample_text">Sample text</string>
-
-
+    <string name="firebase_login">Firebase login</string>
+    <string name="login_with_google">Login with google</string>
+    <string name="logout_with_google">logout_with_google</string>
 
 
 </resources>

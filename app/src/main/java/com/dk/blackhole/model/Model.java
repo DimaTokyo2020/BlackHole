@@ -7,6 +7,7 @@ import java.util.List;
 public class Model {
     public static final Model instance = new Model();
 
+    ModelFirebase mModelFirebase;
     public interface Listener<T>{
         void onComplete(T data);
     }
@@ -14,6 +15,8 @@ public class Model {
 
     //List<Image> data = new LinkedList<>();
     private Model(){
+    mModelFirebase = new ModelFirebase();
+    mModelFirebase.listenToMultipleOnlyChanges();
 
 //        for (int i = 0; i < 10; i++) {
 //            data.add(new Image(""+i,"name " + i,null,false));
