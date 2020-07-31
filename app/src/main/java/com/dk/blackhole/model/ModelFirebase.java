@@ -5,6 +5,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.LiveData;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -39,6 +40,15 @@ public class ModelFirebase {
     public ModelFirebase() {
 
         mDB = FirebaseFirestore.getInstance();
+
+    }
+
+    public void getAllImages(Model.Listener<List<Image>> listener){
+
+
+
+
+//        listener.onComplete();
 
     }
 
@@ -106,10 +116,10 @@ public class ModelFirebase {
     }
 
     public void classAdd() {
-        for(int i = 0 ; i < 100; i++ ){
-            Image image = new Image("" + (i * 2), "dima" + i, "" + (3*i), true);
-            mDB.collection("images").add(image);
-        }
+//        for(int i = 0 ; i < 100; i++ ){
+//            Image image = new Image("" + (i * 2), "dima" + i, "" + (3*i), true);
+//            mDB.collection("images").add(image);
+//        }
     }
 
     public void updateDocument() {
@@ -180,19 +190,30 @@ public class ModelFirebase {
         });
     }
 
-    public void getMultipleDocuments(){
+    /**
+     * Get all images from firebase.
+     * @param listener finally push it to the listener.
+     */
+    public void getMultipleDocuments(Model.Listener<List<Image>> listener){
+
 //after collection can be add where!
         mDB.collection("images").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                ArrayList<Image> data = new ArrayList<>();
                 if(task.isSuccessful()){
-                    for(QueryDocumentSnapshot document : task.getResult()){
+
+                    for(DocumentSnapshot document : task.getResult()){
+//                        document.exists();//maybe needed for prevent exceptions
+                        data.add(document.toObject(Image.class));
                         Log.i(TAG, document.getId() + " => " + document.getData());
                         }
-                    }
+                }
                 else{
                     Log.i(TAG, "Error getting documents: " , task.getException());
                 }
+                listener.onComplete(data);
             }
         });
     }
@@ -246,6 +267,32 @@ public class ModelFirebase {
 
     public void detachListeners(){
         mListenerRegistration.remove();
+    }
+
+    public void createUser(String userName, String userEmail) {
+        // Create a new user with a first and last name
+        Map<String, Object> user = new HashMap<>();
+        user.put("name", userName);
+        user.put("email", userName);
+        user.put("userAlbums", new ArrayList<String>());
+
+// Add a new document with a generated ID
+        mDB.collection("users")
+                .add(user)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error adding document", e);
+                    }
+                });
+
+
     }
 }
 

@@ -8,7 +8,7 @@ import androidx.room.RoomDatabase;
 import com.dk.blackhole.App;
 
 
-@Database(entities = {Image.class}, version = 1)
+@Database(entities = {Image.class}, version = 2)//If there is any changes in the database you need to increase version number
 abstract class AppLocalDbRepository extends RoomDatabase {
     public abstract ImageDao imageDao();
 }

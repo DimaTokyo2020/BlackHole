@@ -33,9 +33,9 @@ import com.google.firebase.auth.UserInfo;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.squareup.picasso.Picasso;
 
-public class MainActivity extends AppCompatActivity {
+public class SignInActivity extends AppCompatActivity {
 
-    private final String TAG = MainActivity.class.getSimpleName();
+    private final String TAG = SignInActivity.class.getSimpleName();
     static final int GOOGLE_SIGN = 123;
     private EditText setNameET;
     FirebaseAuth mAuth;
@@ -78,31 +78,30 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    void SignInGoogle(){
 
+    void SignInGoogle(){
         progressBar.setVisibility(View.VISIBLE);
         Intent sigIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(sigIntent, GOOGLE_SIGN);
         Log.i(TAG, "SignInGoogle");
     }
 
+
+    /**
+     * Here we get google sign answer
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        Log.i(TAG, "onActivityResult start");
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == GOOGLE_SIGN){
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
-                Log.i(TAG, "onActivityResult start 2");
-                if(account != null){
-                    firebaseAuthWithGoogle(account);
-                    Log.i(TAG, "onActivityResult start 2");
-                }
-
-            }catch (ApiException e){
-                e.printStackTrace();;
-            }
+                if(account != null){ firebaseAuthWithGoogle(account); }
+            }catch (ApiException e){ e.printStackTrace(); }
         }
     }
 
@@ -131,12 +130,13 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     *
+     * @param user
+     */
     private void updateUI(FirebaseUser user) {
 
-//        if(user1 != null){
-//            String photo = String.valueOf(user1.getPhotoUrl());
-//            FirebaseUser user = mAuth.getCurrentUser();
-//            user1.getProviderData();
+//
             if (user != null) {
                 // User is signed in
                 String displayName = user.getDisplayName();
@@ -156,22 +156,14 @@ public class MainActivity extends AppCompatActivity {
                         userEmail = userInfo.getEmail();
                     }
                 }
-
-
-                if(displayName == null){
-                    askUserForAName();
-                }
+                if(displayName == null){ askUserForAName(); }//If the user don't have firebase user name we ask him/her for a name other way we just open next activity.
                 else {
                     setNameEmailImage(displayName, userEmail, profileUri);
                     startHomeActivity();
                 }
             btn_login.setVisibility(View.INVISIBLE);
             btn_logout.setVisibility(View.VISIBLE);
-
-
-
         }
-
 
         else{
             text.setText(getString(R.string.firebase_login));
@@ -180,10 +172,12 @@ public class MainActivity extends AppCompatActivity {
             btn_logout.setVisibility(View.INVISIBLE);
         }
     }
+
+
+
     private void setNameEmailImage(String displayName, String userEmail, Uri profileUri) {
 
         Picasso.get().load(profileUri).into(image);
-
 
         text.postDelayed(new Runnable() {
             @Override
@@ -202,38 +196,13 @@ public class MainActivity extends AppCompatActivity {
                 .addOnCompleteListener(this,task -> updateUI(null));
     }
 
-    public void test(View view) {
 
-
-
-        FirebaseUser user = mAuth.getCurrentUser();
-        user.updateProfile(new UserProfileChangeRequest.Builder().setDisplayName("").build());
-        String displayName = user.getDisplayName();
-        String userEmail = user.getEmail();
-        Uri profileUri = user.getPhotoUrl();
-
-        // If the above were null, iterate the provider data
-        // and set with the first non null data
-        for (UserInfo userInfo : user.getProviderData()) {
-            if (displayName == null && userInfo.getDisplayName() != null) {
-                displayName = userInfo.getDisplayName();
-            }
-            if (profileUri == null && userInfo.getPhotoUrl() != null) {
-                profileUri = userInfo.getPhotoUrl();
-            }
-            if (userEmail == null && userInfo.getEmail() != null) {
-                userEmail = userInfo.getEmail();
-            }
-        }
-
-        setNameEmailImage(displayName, userEmail, profileUri);
-    }
-
+    /**
+     * Open keyboard and wait for user to input his/ her name
+     */
     private void askUserForAName(){
         setNameET.setVisibility(View.VISIBLE);
         openKeyboard();
-
-
     }
 
     private void openKeyboard() {
@@ -242,6 +211,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * Here we initialize edit text, so when the user finish to write his/ her name we open next activity
+     * @param editText - the text that hold the user name
+     */
     private void initEditTextPressedDone( EditText editText) {
         editText.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
@@ -258,12 +231,44 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+
+    /**
+     * Open HomeActivity
+     */
     private void startHomeActivity(){
-        Intent intent = new Intent(MainActivity.this, HomeActivity.class);
-//        Bundle userParams = new Bundle();
-//        userParams.put("key", 1); //Your id
-//        intent.putExtras(b); //Put your id to your next Intent
+        Intent intent = new Intent(SignInActivity.this, HomeActivity.class);
         startActivity(intent);
         finish();
     }
 }
+
+
+
+
+
+//    public void test(View view) {
+//
+//
+//
+//        FirebaseUser user = mAuth.getCurrentUser();
+//        user.updateProfile(new UserProfileChangeRequest.Builder().setDisplayName("").build());
+//        String displayName = user.getDisplayName();
+//        String userEmail = user.getEmail();
+//        Uri profileUri = user.getPhotoUrl();
+//
+//        // If the above were null, iterate the provider data
+//        // and set with the first non null data
+//        for (UserInfo userInfo : user.getProviderData()) {
+//            if (displayName == null && userInfo.getDisplayName() != null) {
+//                displayName = userInfo.getDisplayName();
+//            }
+//            if (profileUri == null && userInfo.getPhotoUrl() != null) {
+//                profileUri = userInfo.getPhotoUrl();
+//            }
+//            if (userEmail == null && userInfo.getEmail() != null) {
+//                userEmail = userInfo.getEmail();
+//            }
+//        }
+//
+//        setNameEmailImage(displayName, userEmail, profileUri);
+//    }

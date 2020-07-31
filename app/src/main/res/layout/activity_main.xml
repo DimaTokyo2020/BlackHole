@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimary"
-    tools:context=".MainActivity">
+    tools:context=".SignInActivity">
 
     <ImageView
         android:id="@+id/image"
@@ -78,13 +78,14 @@
         android:text="@string/logout_with_google"
         android:background="@drawable/round_bg" />
 
+    <!--
     <Button
 
         android:layout_marginTop="400dp"
         android:onClick="test"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
-
+-->
 
 
 

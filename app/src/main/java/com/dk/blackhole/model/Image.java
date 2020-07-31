@@ -10,7 +10,11 @@ import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import com.google.firebase.firestore.FieldValue;
+
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 @Entity
 public class Image implements Serializable {
@@ -22,7 +26,9 @@ public class Image implements Serializable {
     private String size;
     private String height;
     private String width;
-    private Boolean isChecked;
+    private boolean isChecked;
+    private double lastUpdated;
+    private boolean isDeleted;
     /*
     public String time_stamp;
     public String user_uploaded;
@@ -34,21 +40,10 @@ public class Image implements Serializable {
 
 
 
-    //public Image() { }
+    public Image() { }
 
-
-    public Image(@NonNull String id, String name, String size, boolean isChecked) {
-        this.id = id;
-        this.name = name;
-        if(size != null) {
-            this.size = size;
-        }else{
-            this.size = "none";
-        }
-        this.isChecked = isChecked;
-
-    }
-//    public Image(String id, String name, String height, String width, String size, boolean isChecked) {
+//
+//    public Image(@NonNull String id, String name, String size, boolean isChecked) {
 //        this.id = id;
 //        this.name = name;
 //        if(size != null) {
@@ -59,6 +54,18 @@ public class Image implements Serializable {
 //        this.isChecked = isChecked;
 //
 //    }
+    public Image(@NonNull String id, String name, String height, String width, String size,
+                 boolean isChecked, double lastUpdated, boolean isDeleted) {
+        this.id = id;
+        this.name = name;
+        if(size != null) {
+            this.size = size;
+        }else{
+            this.size = "none";
+        }
+        this.isChecked = isChecked;
+
+    }
 //
 //    public Image(String id, String name, String size, String height, String width, String time_stamp, String user_uploaded
 //            , String event, String comments) {
@@ -90,7 +97,17 @@ public class Image implements Serializable {
     public void setWidth(String width) { this.width = width; }
 
     public void setIsChecked(Boolean checked) { isChecked = checked; }
-//    public void setTime_stamp(String time_stamp) { this.time_stamp = time_stamp; }
+
+
+
+    public void setLastUpdated(double lastUpdated) {
+        this.lastUpdated = lastUpdated;
+    }
+
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
+    }
+    //    public void setTime_stamp(String time_stamp) { this.time_stamp = time_stamp; }
 //
 //    public void setUser_uploaded(String user_uploaded) { this.user_uploaded = user_uploaded; }
 //
@@ -115,7 +132,17 @@ public class Image implements Serializable {
     public String getWidth() { return width; }
 
     public Boolean getIsChecked() { return isChecked; }
-//    public String getTime_stamp() { return time_stamp; }
+
+
+
+    public double getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+    //    public String getTime_stamp() { return time_stamp; }
 //
 //    public String getUser_uploaded() { return user_uploaded; }
 //
@@ -130,6 +157,20 @@ public class Image implements Serializable {
     //public String getImgUrl() { return imgUrl; }
 
     //public Boolean getChecked() { return isChecked; }
+
+    public Map<String,Object> toMap(){
+
+        HashMap<String,Object> result = new HashMap<>();
+        result.put("id", id);
+        result.put("name", name);
+        result.put("size", size);
+        result.put("height", height);
+        result.put("width", width);
+        result.put("isChecked", isChecked);
+        result.put("lastUpdated", lastUpdated);
+        result.put("isDeleted", FieldValue.serverTimestamp());
+        return result;
+    }
 
 
 }

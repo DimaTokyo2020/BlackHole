@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/imagesListFragment"
-        android:name="com.dk.blackhole.Fragments.ImagesListFragment"
+        android:name="com.dk.blackhole.fragments.imagesFrags.ImagesListFragment"
         android:label="Images"
         tools:layout="@layout/fragment_images_list">
         <action
@@ -16,7 +16,7 @@
     </fragment>
     <fragment
         android:id="@+id/imageDetailsFragment"
-        android:name="com.dk.blackhole.Fragments.ImageDetailsFragment"
+        android:name="com.dk.blackhole.fragments.imagesFrags.ImageDetailsFragment"
         android:label="fragment_image_details"
         tools:layout="@layout/fragment_image_details" >
         <argument
@@ -30,7 +30,7 @@
         app:popExitAnim="@anim/right_out" />
     <fragment
         android:id="@+id/mainFragment"
-        android:name="com.dk.blackhole.Fragments.MainFragment"
+        android:name="com.dk.blackhole.fragments.MainFragment"
         android:label="fragment_main"
         tools:layout="@layout/fragment_main" >
         <action
@@ -43,7 +43,7 @@
     <action android:id="@+id/action_global_mainFragment" app:destination="@id/mainFragment" />
     <fragment
         android:id="@+id/cameraFragment"
-        android:name="com.dk.blackhole.Fragments.CameraFragment"
+        android:name="com.dk.blackhole.fragments.CameraFragment"
         android:label="fragment_camera"
         tools:layout="@layout/fragment_camera" />
     <action android:id="@+id/action_global_cameraFragment" app:destination="@id/cameraFragment" />

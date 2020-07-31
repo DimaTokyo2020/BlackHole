@@ -1,5 +1,6 @@
 package com.dk.blackhole.model;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -10,7 +11,6 @@ import java.util.List;
 
 /**
  *  This class wrap the SQLite functionality
- *
  *  AlL the DB request are passing through this class
  */
 
@@ -19,7 +19,8 @@ import java.util.List;
 @Dao
 public interface ImageDao {
     @Query("select * from Image")
-    List<Image> getAll();
+    LiveData<List<Image>> getAll();//When we are using LiveData we automatically get update that a new data arrive.
+                                  // So when we refresh the data by new request to firebase we just update the local db and the local db update as.
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(Image... Images);

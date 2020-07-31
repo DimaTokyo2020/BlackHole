@@ -1,4 +1,4 @@
-package com.dk.blackhole.Fragments;
+package com.dk.blackhole.fragments.imagesFrags;
 
 
 import android.content.Context;
@@ -14,10 +14,15 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.dk.blackhole.viewModels.ImagesListViewModel;
 import com.dk.blackhole.R;
 import com.dk.blackhole.model.Image;
 import com.dk.blackhole.model.Model;
@@ -29,10 +34,12 @@ import java.util.Objects;
 
 public class ImagesListFragment extends Fragment {
 
-    private RecyclerView list;
+    private RecyclerView mListView;
     private List<Image> mData  = new ArrayList<>();//to prevent null EXCEPTION
     private ImagesListAdapter adapter;
     private Context mContext;
+    private ImagesListViewModel mVM;
+    private LiveData<List<Image>> liveData;
 
     public interface Delegate{
         void onItemSelected(Image image);
@@ -40,20 +47,14 @@ public class ImagesListFragment extends Fragment {
 
     private Delegate parent;
 
-    void setTitle(String title){
-
-    }
 
     public ImagesListFragment() {
-        Model.instance.getAllImages(new Model.Listener<List<Image>>(){
-            @Override
-            public void onComplete(List<Image> data) {
-                mData = data;
-                if(adapter != null){
-                    adapter.notifyDataSetChanged();//refresh the page with new data
-                }
-            }
-        });
+        liveData = Model.instance.getAllImages();
+
+        if(adapter != null){
+            adapter.notifyDataSetChanged();//refresh the page with new data
+        }
+
     }
 
     /*
@@ -70,25 +71,41 @@ public class ImagesListFragment extends Fragment {
     }*/
 
 
-
-    @Override
+    /**
+     *
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
+    @Override//could calls many times
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         View view = inflater.inflate(R.layout.fragment_images_list, container, false);
         Objects.requireNonNull(mContext = getContext());
-        list = view.findViewById(R.id.images_list_list);
-        list.setHasFixedSize(true);
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(mContext);
-        list.setLayoutManager(layoutManager);
-
+        //liveData = mVM.getData();
+        liveData.observe(getViewLifecycleOwner(), new Observer<List<Image>>() {
+            @Override
+            public void onChanged(List<Image> images) {//new data notification
+                mData = images;
+                adapter.notifyDataSetChanged();//refresh the page with new data
+            }
+        });
 
         adapter = new ImagesListAdapter();
-        list.setAdapter(adapter);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(mContext);
+        mListView = view.findViewById(R.id.images_list_list);
+        mListView.setHasFixedSize(true);
+        mListView.setLayoutManager(layoutManager);
+        mListView.setAdapter(adapter);
+
+
         //next 3 lines give space between the items in the recyclerView
         DividerItemDecoration itemDecorator = new DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL);
         itemDecorator.setDrawable(Objects.requireNonNull(ContextCompat.getDrawable(mContext, R.drawable.divider_item_decorator_custom)));
-        list.addItemDecoration(itemDecorator);
+        mListView.addItemDecoration(itemDecorator);
 
         adapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
@@ -99,19 +116,36 @@ public class ImagesListFragment extends Fragment {
             }
         });
 
+        SwipeRefreshLayout swipeRefresh = view.findViewById(R.id.image_list_swipe_refresh);
+
+        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mVM.refresh(new Model.CompleteListener() {
+                    @Override
+                    public void onComplete() {
+                        swipeRefresh.setRefreshing(false);//stop the swipe spinner
+                    }
+                });
+            }
+        });
         return view;
     }
 
 
     @Override
-    public void onAttach(@NonNull Context context) {
+    public void onAttach(@NonNull Context context) {//calls once
         super.onAttach(context);
         if(context instanceof  Delegate){
             parent = (Delegate)getActivity();
         }else{
             throw new  RuntimeException(context.toString() + "must implement Delegate");
         }
+
+
+        mVM = new ViewModelProvider(this). get(ImagesListViewModel.class);
     }
+
 
     @Override
     public void onDetach() {

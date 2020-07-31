@@ -1,4 +1,4 @@
-package com.dk.blackhole.Fragments;
+package com.dk.blackhole.fragments.imagesFrags;
 
 
 import android.os.Bundle;
@@ -15,6 +15,7 @@ import androidx.navigation.Navigation;
 
 
 import com.dk.blackhole.R;
+import com.dk.blackhole.fragments.imagesFrags.ImageDetailsFragmentArgs;
 import com.dk.blackhole.model.Image;
 
 /**

@@ -3,13 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.dk.blackhole.fragments.CameraFragment">
+    tools:context=".fragments.albumsFrags.AlbumsListFragment">
 
-
-    <ImageView
-        android:contentDescription="@string/image"
-        android:id="@+id/imageFromCameraIV"
+    <!-- TODO: Update blank fragment layout -->
+    <TextView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:text="@string/hello_blank_fragment" />
 
 </FrameLayout>

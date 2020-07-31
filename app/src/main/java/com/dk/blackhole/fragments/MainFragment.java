@@ -1,4 +1,4 @@
-package com.dk.blackhole.Fragments;
+package com.dk.blackhole.fragments;
 
 
 import android.Manifest;
@@ -27,7 +27,6 @@ import com.dk.blackhole.R;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
