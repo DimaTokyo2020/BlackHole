@@ -1,14 +1,10 @@
 package com.dk.blackhole.viewModels;
 
-import android.net.Uri;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.dk.blackhole.model.Image;
-import com.dk.blackhole.model.Model;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.dk.blackhole.model.ImagesModel;
 
 import java.util.HashMap;
 import java.util.List;
@@ -31,15 +27,15 @@ public class ImagesListViewModel extends ViewModel {
     public  LiveData<List<Image>> getImagesOfAlbum(String album){
 
         if(liveDataAllImages == null){
-            liveDataAllImages = Model.instance.getUserAllImages();
+            liveDataAllImages = ImagesModel.instance.getUserAllImages();
 
         }
 
         return liveDataAllImages.getValue().get(album);
     }
 
-    public void refresh(Model.CompleteListener listener) {
-        Model.instance.refreshImageList(listener);
+    public void refresh(ImagesModel.CompleteListener listener) {
+        ImagesModel.instance.refreshImageList(listener);
     }
 
 

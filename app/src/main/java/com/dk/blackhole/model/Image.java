@@ -1,17 +1,9 @@
 package com.dk.blackhole.model;
-/*
-import androidx.annotation.NonNull;
-
-import androidx.room.PrimaryKey;
-
-*/
 
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
-
 import com.google.firebase.firestore.FieldValue;
-
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,7 +14,9 @@ public class Image implements Serializable {
     @PrimaryKey
     @NonNull
     private String id;
+//    @ColumnInfo(name = "name")
     private String name;
+//    @ColumnInfo(name = "size")
     private String size;
     private String height;
     private String width;

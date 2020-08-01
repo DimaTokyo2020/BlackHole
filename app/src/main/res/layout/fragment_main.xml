@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -43,4 +43,27 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="41dp"
         android:contentDescription="@string/image" />
-</FrameLayout>
+
+
+    <com.dk.blackhole.CustomViewPager
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="300dp"
+        android:layout_marginEnd="-300dp"/>
+
+    <ImageButton
+        android:focusable="true"
+        android:id="@+id/closeViewPagerBT"
+        android:layout_width="@dimen/button_width"
+        android:layout_height="@dimen/button_height"
+        android:layout_alignParentEnd="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="35dp"
+        android:background="?android:selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_close_black_24dp" />
+
+
+</RelativeLayout>

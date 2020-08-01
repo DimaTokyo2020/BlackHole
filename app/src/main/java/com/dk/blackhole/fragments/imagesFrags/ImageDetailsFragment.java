@@ -15,7 +15,6 @@ import androidx.navigation.Navigation;
 
 
 import com.dk.blackhole.R;
-import com.dk.blackhole.fragments.imagesFrags.ImageDetailsFragmentArgs;
 import com.dk.blackhole.model.Image;
 
 /**

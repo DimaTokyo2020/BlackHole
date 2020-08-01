@@ -5,7 +5,6 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.lifecycle.LiveData;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -30,6 +29,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.UUID;
 
 public class ModelFirebase {
 
@@ -37,13 +38,15 @@ public class ModelFirebase {
     private FirebaseFirestore mDB;
     ListenerRegistration mListenerRegistration;
 
+
+
     public ModelFirebase() {
 
         mDB = FirebaseFirestore.getInstance();
 
     }
 
-    public void getAllImages(Model.Listener<List<Image>> listener){
+    public void getAllImages(ImagesModel.Listener<List<Image>> listener){
 
 
 
@@ -103,7 +106,7 @@ public class ModelFirebase {
                 .set(data, SetOptions.merge());
     }
 
-    public void dataTypes() {
+    public void dataTypesAdd() {
         Map<String, Object> docData = new HashMap<>();
         docData.put("StringExample", "Hello world!");
         docData.put("booleanExample", true);
@@ -116,10 +119,9 @@ public class ModelFirebase {
     }
 
     public void classAdd() {
-//        for(int i = 0 ; i < 100; i++ ){
-//            Image image = new Image("" + (i * 2), "dima" + i, "" + (3*i), true);
-//            mDB.collection("images").add(image);
-//        }
+        String newUniqueId = getNewUniqueId();
+            Image image = new Image(newUniqueId, "dima" , "" + 3,"dima","dima", true ,545.9,true);
+            mDB.collection("images").document(newUniqueId).set(image);
     }
 
     public void updateDocument() {
@@ -194,7 +196,7 @@ public class ModelFirebase {
      * Get all images from firebase.
      * @param listener finally push it to the listener.
      */
-    public void getMultipleDocuments(Model.Listener<List<Image>> listener){
+    public void getMultipleDocuments(ImagesModel.Listener<List<Image>> listener){
 
 //after collection can be add where!
         mDB.collection("images").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -291,127 +293,122 @@ public class ModelFirebase {
                         Log.w(TAG, "Error adding document", e);
                     }
                 });
+    }
 
+    public void addCollection(String albumId){
+        Image newImage = new Image();
+        mDB.collection("albums").document(albumId).collection("new Coollection").add(newImage);
 
     }
-}
 
+    private String getNewUniqueId(){return UUID.randomUUID().toString();}//random
 
+    public void getAllUserAlbums(ImagesModel.Listener<List<Image>> listener){
 
-
-
-
-
-
-
-/*
-import android.util.Log;
-
-import androidx.annotation.NonNull;
-/
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.Timestamp;
-import com.google.firebase.firestore.FieldValue;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-public class ImageFirebase {
-
-    final static String IMAGE_COLLECTION = "images";
-
-    public static void getAllImagesSince(long since, final ImageModel.Listener<List<Image>> listener) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        Timestamp ts = new Timestamp(since,0);
-        db.collection(IMAGE_COLLECTION).whereGreaterThanOrEqualTo("lastUpdated", ts)
-                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        //after collection can be add where!
+        mDB.collection("albums").whereArrayContains("owners" , "max").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                List<Image> stData = null;
-                if (task.isSuccessful()){
-                    stData = new LinkedList<Image>();
-                    for(QueryDocumentSnapshot doc : task.getResult()){
-                        Map<String,Object> json = doc.getData();
-                        Image image = factory(json);
-                        stData.add(image);
+
+                ArrayList<Image> data = new ArrayList<>();
+                if(task.isSuccessful()){
+
+                    for(DocumentSnapshot document : task.getResult()){
+//                        document.exists();//maybe needed for prevent exceptions
+//                        data.add(document.toObject(Image.class));
+                        Log.i(TAG, document.getId() + " => " + document.getData());
                     }
                 }
-                listener.onComplete(stData);
-                Log.d("TAG","refresh " + stData.size());
+                else{
+                    Log.i(TAG, "Error getting documents: " , task.getException());
+                }
+                listener.onComplete(data);
             }
         });
     }
 
-    public static void getAllImages(final ImageModel.Listener<List<Image>> listener) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection(IMAGE_COLLECTION).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                List<Image> stData = null;
-                if (task.isSuccessful()){
-                    stData = new LinkedList<Image>();
-                    for(QueryDocumentSnapshot doc : task.getResult()){
-                        Image image = doc.toObject(Image.class);
-                        stData.add(image);
-                    }
+
+    //For Test
+    public void createFakeAlbums(){
+//        String newUniqueId = getNewUniqueId();
+        ArrayList<Image> fakeImages = new ArrayList<>();
+        ArrayList<Album> fakeAlbums = new ArrayList<>();
+        String[] owners ={"max", "sergey" , "dima"};
+        Random random = new Random();
+
+
+
+        for (int i = 0; i < 2; i++) {
+            fakeImages.add(new Image(getNewUniqueId(), "fakeImage-" + (i + 1), "fake-" + (i + 1), "fake-" + (i + 1),
+                    "fake-" + (i + 1), true, (i + 1), true));
+        }
+
+        for(int j = 0; j < 2; j++) {
+            ArrayList<String> owner = new ArrayList<>();
+            owner.add(owners[random.nextInt(3)]);
+            fakeAlbums.add(new Album(getNewUniqueId(), "fakeAlbum-" + (j+1), owner,
+                    "fakeAlbum-" + (j+1),"fakeAlbum-" + (j+1),fakeImages));
+        }
+
+        for(int k = 0; k < fakeAlbums.size(); k++){
+            mDB.collection("albums").document(fakeAlbums.get(k).getId()).set(fakeAlbums.get(k)).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.i("dimaa", e.getMessage());
                 }
-                listener.onComplete(stData);
-            }
-        });
+            }).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Log.i("dimaa", "yeaaa!!");
+                }
+            }).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    Log.i("dimaa", "yhthgeaaa!!");
+                }
+            });}
+
     }
 
-    public static void addImage(Image image, final ImageModel.Listener<Boolean> listener) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection(IMAGE_COLLECTION).document(image.getId()).set(toJson(image)).addOnCompleteListener(new OnCompleteListener<Void>() {
+    public void insertAlbum(){
+
+        Album album = new Album();
+//        Image image = new Image();
+//        mDB.collection("images").document(newUniqueId).set(image);
+        mDB.collection("images").document("gfgfg").set(album).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.i("dimaa", e.getMessage());
+            }
+        }).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.i("dimaa", "yeaaa!!");
+            }
+        }).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                if (listener!=null){
-                    listener.onComplete(task.isSuccessful());
-                }
+                Log.i("dimaa", "yhthgeaaa!!");
+            }
+        });}
+
+
+    public void getCustomObject2(){
+
+        DocumentReference docRef =
+                mDB.collection("images").document("hSEtM9asEva41qHeoJ1W");
+        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot)
+            {
+//                Image image = documentSnapshot.toObject(Image.class);
+                Log.i(TAG, "reciaeved: " + documentSnapshot);
             }
         });
     }
 
-    private static Image factory(Map<String, Object> json){
-        Image img = new Image();
-        img.id = (String)json.get("id");
-        img.name = (String)json.get("name");
-        img.size = (String)json.get("size");
-        img.height = (String)json.get("height");
-        img.width = (String)json.get("width");
-        img.time_stamp = (String)json.get("time_stamp");
-        img.user_uploaded = (String)json.get("user_uploaded");
-        img.event = (String)json.get("event");
-        img.comments = (String)json.get("comments");
-        //st.imgUrl = (String)json.get("imgUrl");
-        //st.isChecked = (boolean)json.get("isChecked");
-        Timestamp ts = (Timestamp)json.get("lastUpdated");
-        if (ts != null) img.lastUpdated = ts.getSeconds();
-        return img;
-    }
-
-    private static Map<String, Object> toJson(Image img){
-        HashMap<String, Object> result = new HashMap<>();
-        result.put("id", img.id);
-        result.put("name", img.name);
-        result.put("size", img.size);
-        result.put("height", img.height);
-        result.put("width", img.width);
-        result.put("time_stamp", img.time_stamp);
-        result.put("user_uploaded", img.user_uploaded);
-        result.put("event", img.event);
-        result.put("comments", img.comments);
-        //result.put("imgUrl", st.imgUrl);
-        //result.put("isChecked", st.isChecked);
-        result.put("lastUpdated", FieldValue.serverTimestamp());
-        return result;
-    }
-
 }
-*/
+
+
+
+

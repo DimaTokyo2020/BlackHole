@@ -2,27 +2,47 @@ package com.dk.blackhole.fragments;
 
 
 import android.Manifest;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.icu.text.Transliterator;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.AttributeSet;
 import android.util.Base64;
 import android.util.Log;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
+import androidx.annotation.AnimatorRes;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.viewpager.widget.ViewPager;
 
+import com.dk.blackhole.App;
+import com.dk.blackhole.CustomViewPager;
+import com.dk.blackhole.OnSwipeTouchListener;
 import com.dk.blackhole.R;
+import com.dk.blackhole.fragments.albumsFrags.ViewPagerAdapter;
+import com.dk.blackhole.model.Image;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -43,7 +63,8 @@ import jcifs.smb.SmbFileOutputStream;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MainFragment extends Fragment {
+public class MainFragment extends Fragment{
+
 
     private static final int CAMERA_REQUEST = 1888;
     private static final int MY_CAMERA_PERMISSION_CODE = 100;
@@ -54,6 +75,14 @@ public class MainFragment extends Fragment {
     private Bitmap theImage;
     private Activity activity;
     private ImageView newPhotoImageView;
+
+    private String[] imageUrls = new String[]{
+            "https://cdn.pixabay.com/photo/2016/11/11/23/34/cat-1817970_960_720.jpg",
+            "https://cdn.pixabay.com/photo/2017/12/21/12/26/glowworm-3031704_960_720.jpg",
+            "https://cdn.pixabay.com/photo/2017/12/24/09/09/road-3036620_960_720.jpg",
+            "https://cdn.pixabay.com/photo/2017/11/07/00/07/fantasy-2925250_960_720.jpg",
+            "https://cdn.pixabay.com/photo/2017/10/10/15/28/butterfly-2837589_960_720.jpg"
+    };
 
 
 
@@ -104,7 +133,104 @@ public class MainFragment extends Fragment {
 
 
 
+//ViewPager  //imageSlider
+        CustomViewPager viewPager = mView.findViewById(R.id.viewPager);
+        viewPager.setPagingEnabled(false);//stop swiping
+        viewPager.setPadding(0, 0, 100, 0);
+        viewPager.setClipToPadding(false);
+        viewPager.setPageMargin(10);
 
+
+
+        ViewPagerAdapter adapter = new ViewPagerAdapter(App.context , imageUrls);
+        viewPager.setAdapter(adapter);
+        viewPager.setOnTouchListener(new OnSwipeTouchListener(App.context){
+            public void onSwipeLeft(){
+                Log.i("dima","boom boom");
+                ObjectAnimator animation = ObjectAnimator.ofFloat(viewPager, "translationX", -1200f );
+                animation.setDuration(500);
+                animation.start();
+                viewPager.setPagingEnabled(true);//start swiping
+                viewPager.setOnTouchListener(null);//stop on touchListener
+
+            }
+
+
+        });
+        viewPager.setOnHoverListener(new View.OnHoverListener() {
+            @Override
+            public boolean onHover(View v, MotionEvent event) {
+                Log.i("dima", "onhover");
+                return false;
+            }
+        });
+
+        viewPager.setOnDragListener(new View.OnDragListener() {
+            @Override
+            public boolean onDrag(View v, DragEvent event) {
+                Log.i("dima", "onDrage");
+                return false;
+            }
+        });
+        viewPager.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Log.i("dima", "onClick");
+            }
+        });
+
+
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+
+                Log.i("dimaa", "position: " + position);
+                Log.i("dimaa", "positionOffset: " + positionOffset);
+                Log.i("dimaa", "positionOffsetPixels: " + positionOffsetPixels);
+//                if(position == 0 && positionOffset > 0.1 && position < 0.2){
+////                ObjectAnimator animation = ObjectAnimator.ofFloat(viewPager, "translationX", -800f );
+////                animation.setDuration(2000);
+////                    animation.start();
+////
+//                    Handler handler = new Handler();
+//                    handler.post(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            ObjectAnimator animation = ObjectAnimator.ofFloat(viewPager, "translationX", -600f );
+//                            animation.setDuration(500);
+//                            animation.start();
+//                        }
+                    }
+
+
+
+            @Override
+            public void onPageSelected(int position) {
+                Log.i("dimaa", "b");
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+Log.i("dimaa", "a");
+            }
+        });
+
+
+        ImageButton imageButton = mView.findViewById(R.id.closeViewPagerBT);
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ObjectAnimator animation = ObjectAnimator.ofFloat(viewPager, "translationX", +0f );
+                animation.setDuration(500);
+                animation.start();
+                imageButton.setVisibility(View.GONE);
+                viewPager.setCurrentItem(0,true);
+                //stop swipe
+                //set listener on  scrool
+            }
+        });
         return mView;
     }
 

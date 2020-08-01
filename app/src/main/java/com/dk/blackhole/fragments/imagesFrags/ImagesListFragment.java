@@ -25,7 +25,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.dk.blackhole.viewModels.ImagesListViewModel;
 import com.dk.blackhole.R;
 import com.dk.blackhole.model.Image;
-import com.dk.blackhole.model.Model;
+import com.dk.blackhole.model.ImagesModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +49,7 @@ public class ImagesListFragment extends Fragment {
 
 
     public ImagesListFragment() {
-        liveData = Model.instance.getAllImages();
+        liveData = ImagesModel.instance.getAllImages();
 
         if(adapter != null){
             adapter.notifyDataSetChanged();//refresh the page with new data
@@ -121,7 +121,7 @@ public class ImagesListFragment extends Fragment {
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                mVM.refresh(new Model.CompleteListener() {
+                mVM.refresh(new ImagesModel.CompleteListener() {
                     @Override
                     public void onComplete() {
                         swipeRefresh.setRefreshing(false);//stop the swipe spinner

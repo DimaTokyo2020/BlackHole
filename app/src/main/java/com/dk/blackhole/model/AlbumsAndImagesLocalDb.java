@@ -9,15 +9,15 @@ import com.dk.blackhole.App;
 
 
 @Database(entities = {Image.class}, version = 2)//If there is any changes in the database you need to increase version number
-abstract class AppLocalDbRepository extends RoomDatabase {
-    public abstract ImageDao imageDao();
+abstract class AlbumsAndImagesLocalDbRepository extends RoomDatabase {
+    public abstract AlbumsAndImagesDao imageDao();
 }
 
-public class AppLocalDb {
-    static public AppLocalDbRepository db =
+public class AlbumsAndImagesLocalDb {
+    static public AlbumsAndImagesLocalDbRepository db =
             Room.databaseBuilder(App.context,
-                    AppLocalDbRepository.class,
-                    "BlackHoleDB.db")
+                    AlbumsAndImagesLocalDbRepository.class,
+                    "BlackHoleImagesDB.db")
                     .fallbackToDestructiveMigration()
                     .build();
 }

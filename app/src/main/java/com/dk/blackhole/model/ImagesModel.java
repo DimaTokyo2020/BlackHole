@@ -3,14 +3,12 @@ package com.dk.blackhole.model;
 import android.os.AsyncTask;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class Model {
-    public static final Model instance = new Model();
+public class ImagesModel {
+    public static final ImagesModel instance = new ImagesModel();
 
     ModelFirebase mModelFirebase;
 
@@ -31,16 +29,15 @@ public class Model {
 
 
     //List<Image> data = new LinkedList<>();
-    private Model(){
+    private ImagesModel(){
     mModelFirebase = new ModelFirebase();
-
-
-//    mModelFirebase.listenToMultipleOnlyChanges();//test
-
-
-//        for (int i = 0; i < 10; i++) {
-//            data.add(new Image(""+i,"name " + i,null,false));
+    mModelFirebase.getCustomObject2();
+//    mModelFirebase.getAllUserAlbums(new Listener<List<Image>>() {
+//        @Override
+//        public void onComplete(List<Image> data) {
+//
 //        }
+//    });//test
     }
 
     public void refreshImageList(CompleteListener listener){
@@ -51,7 +48,7 @@ public class Model {
                     @Override
                     protected String doInBackground(String... strings) {
                         for(Image image: data){
-                            AppLocalDb.db.imageDao().insertAll(image);
+                            AlbumsAndImagesLocalDb.db.imageDao().insertAll(image);
                         }
                         return "";
                     }
@@ -71,7 +68,7 @@ public class Model {
 
     public LiveData<List<Image>> getAllImages(){
 
-    LiveData<List<Image>> liveData = AppLocalDb.db.imageDao().getAll();
+    LiveData<List<Image>> liveData = AlbumsAndImagesLocalDb.db.imageDao().getAll();
     refreshImageList(null);
     return liveData;
 
