@@ -1,4 +1,4 @@
-package com.dk.blackhole.fragments.imagesFrags;
+package com.dk.blackhole.viwes.fragments.imagesFrags;
 
 
 import android.content.Context;
@@ -24,8 +24,8 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.dk.blackhole.viewModels.ImagesListViewModel;
 import com.dk.blackhole.R;
-import com.dk.blackhole.model.Image;
-import com.dk.blackhole.model.ImagesModel;
+import com.dk.blackhole.models.image.Image;
+import com.dk.blackhole.models.image.ImagesModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -212,7 +212,7 @@ public class ImagesListFragment extends Fragment {
         @NonNull
         @Override
         public ImageRowViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-            View v = LayoutInflater.from(getActivity()).inflate(R.layout.list_row, viewGroup,false );
+            View v = LayoutInflater.from(getActivity()).inflate(R.layout.image_list_row, viewGroup,false );
             //ImageRowViewHolder vh = new ImageRowViewHolder(v, listener);
             return new ImageRowViewHolder(v, listener);
         }

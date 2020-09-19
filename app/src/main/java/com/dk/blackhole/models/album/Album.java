@@ -1,7 +1,9 @@
-package com.dk.blackhole.model;
+package com.dk.blackhole.models.album;
 
 import androidx.annotation.NonNull;
 import androidx.room.PrimaryKey;
+
+import com.dk.blackhole.models.image.Image;
 
 import java.io.Serializable;
 import java.util.ArrayList;

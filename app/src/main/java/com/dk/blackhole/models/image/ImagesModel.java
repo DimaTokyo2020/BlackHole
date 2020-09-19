@@ -1,4 +1,4 @@
-package com.dk.blackhole.model;
+package com.dk.blackhole.models.image;
 
 import android.os.AsyncTask;
 
@@ -30,6 +30,7 @@ public class ImagesModel {
 
     //List<Image> data = new LinkedList<>();
     private ImagesModel(){
+
     mModelFirebase = new ModelFirebase();
     mModelFirebase.getCustomObject2();
 //    mModelFirebase.getAllUserAlbums(new Listener<List<Image>>() {

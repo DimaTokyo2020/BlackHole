@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.dk.blackhole.fragments.MainFragment"
+    tools:context=".viwes.fragments.MainFragment"
     android:padding="5dp">
 
 
@@ -34,8 +34,20 @@
         android:id="@+id/openImageListFragmentBTN"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/show_all_images"
-        android:layout_marginTop="350dp"/>
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="350dp"
+        android:text="@string/show_all_images" />
+
+
+    <Button
+        android:id="@+id/openAlbumsListFragmentBTN"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/openImageListFragmentBTN"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="50dp"
+        android:text="@string/show_all_albums" />
+
 
     <ImageView
         android:id="@+id/newPhotoImageView"
@@ -45,7 +57,7 @@
         android:contentDescription="@string/image" />
 
 
-    <com.dk.blackhole.CustomViewPager
+    <com.dk.blackhole.viwes.components.CustomViewPager
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="150dp"

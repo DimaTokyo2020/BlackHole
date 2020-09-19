@@ -1,4 +1,4 @@
-package com.dk.blackhole.fragments;
+package com.dk.blackhole.viwes.fragments;
 
 
 import android.app.Activity;

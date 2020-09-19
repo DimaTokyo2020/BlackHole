@@ -1,4 +1,4 @@
-package com.dk.blackhole.fragments.albumsFrags;
+package com.dk.blackhole.viwes.fragments.albumsFrags;
 
 import android.content.Context;
 import android.view.View;
@@ -7,9 +7,7 @@ import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.viewpager.widget.PagerAdapter;
-import androidx.viewpager.widget.ViewPager;
 
-import com.dk.blackhole.model.Image;
 import com.squareup.picasso.Picasso;
 
 public class ViewPagerAdapter extends PagerAdapter {

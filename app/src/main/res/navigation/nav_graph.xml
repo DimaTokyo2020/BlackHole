@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/imagesListFragment"
-        android:name="com.dk.blackhole.fragments.imagesFrags.ImagesListFragment"
+        android:name="com.dk.blackhole.viwes.fragments.imagesFrags.ImagesListFragment"
         android:label="Images"
         tools:layout="@layout/fragment_images_list">
         <action
@@ -16,12 +16,12 @@
     </fragment>
     <fragment
         android:id="@+id/imageDetailsFragment"
-        android:name="com.dk.blackhole.fragments.imagesFrags.ImageDetailsFragment"
+        android:name="com.dk.blackhole.viwes.fragments.imagesFrags.ImageDetailsFragment"
         android:label="fragment_image_details"
         tools:layout="@layout/fragment_image_details" >
         <argument
             android:name="Image"
-            app:argType="com.dk.blackhole.model.Image" />
+            app:argType="com.dk.blackhole.models.image.Image" />
     </fragment>
     <action
         android:id="@+id/action_global_imageDetailsFragment"
@@ -30,7 +30,7 @@
         app:popExitAnim="@anim/right_out" />
     <fragment
         android:id="@+id/mainFragment"
-        android:name="com.dk.blackhole.fragments.MainFragment"
+        android:name="com.dk.blackhole.viwes.fragments.MainFragment"
         android:label="fragment_main"
         tools:layout="@layout/fragment_main" >
         <action
@@ -39,12 +39,20 @@
         <action
             android:id="@+id/action_mainFragment_to_cameraFragment"
             app:destination="@id/cameraFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_albumsListFragment"
+            app:destination="@id/albumsListFragment" />
     </fragment><action android:id="@+id/action_global_imagesListFragment" app:destination="@id/imagesListFragment"/>
     <action android:id="@+id/action_global_mainFragment" app:destination="@id/mainFragment" />
     <fragment
         android:id="@+id/cameraFragment"
-        android:name="com.dk.blackhole.fragments.CameraFragment"
+        android:name="com.dk.blackhole.viwes.fragments.CameraFragment"
         android:label="fragment_camera"
         tools:layout="@layout/fragment_camera" />
     <action android:id="@+id/action_global_cameraFragment" app:destination="@id/cameraFragment" />
+    <fragment
+        android:id="@+id/albumsListFragment"
+        android:name="com.dk.blackhole.viwes.fragments.albumsFrags.AlbumsListFragment"
+        android:label="fragment_albums_list"
+        tools:layout="@layout/fragment_albums_list" /><action android:id="@+id/action_global_albumsListFragment" app:destination="@id/albumsListFragment"/>
 </navigation>

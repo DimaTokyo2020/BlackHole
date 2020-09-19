@@ -1,7 +1,10 @@
-package com.dk.blackhole;
+package com.dk.blackhole.viwes;
 
 import android.content.Intent;
+import android.graphics.Point;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Display;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -15,9 +18,12 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-import com.dk.blackhole.fragments.imagesFrags.ImagesListFragment;
-import com.dk.blackhole.fragments.imagesFrags.ImagesListFragmentDirections;
-import com.dk.blackhole.model.Image;
+
+import com.dk.blackhole.NavGraphDirections;
+import com.dk.blackhole.R;
+import com.dk.blackhole.viwes.fragments.imagesFrags.ImagesListFragment;
+import com.dk.blackhole.viwes.fragments.imagesFrags.ImagesListFragmentDirections;
+import com.dk.blackhole.models.image.Image;
 import com.dk.blackhole.viewModels.HomeActivityViewModel;
 import com.google.android.material.navigation.NavigationView;
 import com.squareup.picasso.Picasso;
@@ -25,19 +31,33 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class HomeActivity extends AppCompatActivity  implements ImagesListFragment.Delegate, NavigationView.OnNavigationItemSelectedListener {
 
+
+    private final String TAG = HomeActivity.class.getSimpleName();
     NavController mNavCtrl;
     private DrawerLayout mDrawer;
     private HomeActivityViewModel mVM;
-
+    public static int  mScreenWidth;
+    public static int  mScreenHeight;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        getScreenSizes();
 
         mVM = new ViewModelProvider(this). get(HomeActivityViewModel.class);
         initDrawer();
         mNavCtrl = Navigation.findNavController(this, R.id.home_nav_host);
         //NavigationUI.setupActionBarWithNavController(this, mNavCtrl);//automatic
+    }
+
+    private void getScreenSizes() {
+        Log.i(TAG, "Inside getScreenSizes");
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        mScreenWidth = size.x;
+        mScreenHeight = size.y;
+        Log.i(TAG, "Screen sizes: Width: " + mScreenWidth + " Height: " + mScreenHeight);
     }
 
     /**

@@ -1,4 +1,4 @@
-package com.dk.blackhole.model;
+package com.dk.blackhole.models.image;
 
 
 import android.util.Log;
@@ -6,6 +6,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.dk.blackhole.models.album.Album;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;

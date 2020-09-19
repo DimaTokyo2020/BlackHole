@@ -1,19 +1,14 @@
-package com.dk.blackhole.fragments;
+package com.dk.blackhole.viwes.fragments;
 
 
 import android.Manifest;
-import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.icu.text.Transliterator;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.util.AttributeSet;
 import android.util.Base64;
 import android.util.Log;
 import android.view.DragEvent;
@@ -21,14 +16,9 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 
-import androidx.annotation.AnimatorRes;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
@@ -37,12 +27,12 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.viewpager.widget.ViewPager;
 
+
 import com.dk.blackhole.App;
-import com.dk.blackhole.CustomViewPager;
-import com.dk.blackhole.OnSwipeTouchListener;
+import com.dk.blackhole.viwes.components.CustomViewPager;
+import com.dk.blackhole.viwes.components.OnSwipeTouchListenerVP;
 import com.dk.blackhole.R;
-import com.dk.blackhole.fragments.albumsFrags.ViewPagerAdapter;
-import com.dk.blackhole.model.Image;
+import com.dk.blackhole.viwes.fragments.albumsFrags.ViewPagerAdapter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -76,6 +66,7 @@ public class MainFragment extends Fragment{
     private Activity activity;
     private ImageView newPhotoImageView;
 
+    //TODO : dlete imageUrls its only for test pagerViewer
     private String[] imageUrls = new String[]{
             "https://cdn.pixabay.com/photo/2016/11/11/23/34/cat-1817970_960_720.jpg",
             "https://cdn.pixabay.com/photo/2017/12/21/12/26/glowworm-3031704_960_720.jpg",
@@ -130,6 +121,15 @@ public class MainFragment extends Fragment{
             }
 
         });
+        (mView.findViewById(R.id.openAlbumsListFragmentBTN)).setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.M)
+            @Override
+            public void onClick(View v) {
+                Log.i(TAG, "opening AlbumsListFragment");
+                navCtrl.navigate(R.id.action_global_albumsListFragment);
+            }
+
+        });
 
 
 
@@ -141,22 +141,11 @@ public class MainFragment extends Fragment{
         viewPager.setPageMargin(10);
 
 
-
+        ImageButton imageButton = mView.findViewById(R.id.closeViewPagerBT);
         ViewPagerAdapter adapter = new ViewPagerAdapter(App.context , imageUrls);
         viewPager.setAdapter(adapter);
-        viewPager.setOnTouchListener(new OnSwipeTouchListener(App.context){
-            public void onSwipeLeft(){
-                Log.i("dima","boom boom");
-                ObjectAnimator animation = ObjectAnimator.ofFloat(viewPager, "translationX", -1200f );
-                animation.setDuration(500);
-                animation.start();
-                viewPager.setPagingEnabled(true);//start swiping
-                viewPager.setOnTouchListener(null);//stop on touchListener
+        setViewPagerOnTouchListener(viewPager, imageButton);
 
-            }
-
-
-        });
         viewPager.setOnHoverListener(new View.OnHoverListener() {
             @Override
             public boolean onHover(View v, MotionEvent event) {
@@ -218,7 +207,7 @@ Log.i("dimaa", "a");
         });
 
 
-        ImageButton imageButton = mView.findViewById(R.id.closeViewPagerBT);
+
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -227,6 +216,8 @@ Log.i("dimaa", "a");
                 animation.start();
                 imageButton.setVisibility(View.GONE);
                 viewPager.setCurrentItem(0,true);
+                viewPager.setPagingEnabled(false);//stop swiping
+                setViewPagerOnTouchListener(viewPager, imageButton);
                 //stop swipe
                 //set listener on  scrool
             }
@@ -235,6 +226,23 @@ Log.i("dimaa", "a");
     }
 
 
+    //TODO DELETE
+    private void setViewPagerOnTouchListener(CustomViewPager viewPager, ImageButton imageButton) {
+        viewPager.setOnTouchListener(new OnSwipeTouchListenerVP(App.context){
+            public void onSwipeLeft(){
+                Log.i("dima","boom boom");
+                ObjectAnimator animation = ObjectAnimator.ofFloat(viewPager, "translationX", -1200f );
+                animation.setDuration(500);
+                animation.start();
+                viewPager.setPagingEnabled(true);//start swiping
+                viewPager.setOnTouchListener(null);//stop on touchListener
+                imageButton.setVisibility(View.VISIBLE);
+
+            }
+
+
+        });
+    }
 
 
     // Storage Permissions

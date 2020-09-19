@@ -1,4 +1,4 @@
-package com.dk.blackhole.model;
+package com.dk.blackhole.models.image;
 
 
 import androidx.room.Database;

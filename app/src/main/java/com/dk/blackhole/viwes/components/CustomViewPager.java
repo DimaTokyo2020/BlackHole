@@ -1,4 +1,4 @@
-package com.dk.blackhole;
+package com.dk.blackhole.viwes.components;
 
 import android.content.Context;
 import android.util.AttributeSet;

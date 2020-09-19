@@ -3,8 +3,8 @@ package com.dk.blackhole.viewModels;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.dk.blackhole.model.Image;
-import com.dk.blackhole.model.ImagesModel;
+import com.dk.blackhole.models.image.Image;
+import com.dk.blackhole.models.image.ImagesModel;
 
 import java.util.HashMap;
 import java.util.List;

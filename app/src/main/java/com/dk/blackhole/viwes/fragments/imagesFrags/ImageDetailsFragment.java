@@ -1,4 +1,4 @@
-package com.dk.blackhole.fragments.imagesFrags;
+package com.dk.blackhole.viwes.fragments.imagesFrags;
 
 
 import android.os.Bundle;
@@ -15,7 +15,7 @@ import androidx.navigation.Navigation;
 
 
 import com.dk.blackhole.R;
-import com.dk.blackhole.model.Image;
+import com.dk.blackhole.models.image.Image;
 
 /**
  * A simple {@link Fragment} subclass.
