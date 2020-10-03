@@ -1,13 +1,25 @@
 package com.dk.blackhole.models.album;
 
 import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 import com.dk.blackhole.models.image.Image;
+import com.dk.blackhole.utils.Utils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
+import okhttp3.internal.Util;
+
+/**
+ * Db Entity in Album Table
+ */
+
+@Entity
 public class Album implements Serializable {
 
 
@@ -16,37 +28,81 @@ public class Album implements Serializable {
     @NonNull
     private String id;
     private String name;
-    private ArrayList<String> owners;
+    private String owner;
+    @ColumnInfo(name = "was_created")//This generate this column name in the table for this member
     private String wasCreated;
-    private String imagesNumber;
-    private ArrayList<Image> images;
+    @ColumnInfo(name = "images_number")
+    private int imagesNumber;
+    @ColumnInfo(name = "is_deleted")
+    boolean isDeleted;
+    @ColumnInfo(name = "last_modify")
+    String lastModify;
+    @ColumnInfo(name = "is_sharable")
+    boolean isSharable;
+    @ColumnInfo(name = "likes")
+    int likesNumber;
 
+    public Album() { }
 
-    public Album() {}
+    public Album(String albumName, String userId){
+        id  = Utils.getNewUniqueId();
+        name = albumName;
+        owner = userId;
+        wasCreated = Utils.getCurrentTime();
+        imagesNumber = 0;
+        isSharable = true;
+        lastModify = wasCreated;
+        isDeleted = false;
+        likesNumber = 0;
 
-    public Album(@NonNull String id, String name, ArrayList<String> owners, String wasCreated, String imagesNumber, ArrayList<Image> images) {
+    }
+
+    public Album(@NonNull String id, String name, String owner, String wasCreated, int imagesNumber, boolean isDeleted, String lastModify, boolean isSharable, int likesNumber) {
         this.id = id;
         this.name = name;
-        this.owners = owners;
+        this.owner = owner;
         this.wasCreated = wasCreated;
         this.imagesNumber = imagesNumber;
-        this.images = images;
+        this.isDeleted = isDeleted;
+        this.lastModify = lastModify;
+        this.isSharable = isSharable;
+        this.likesNumber = likesNumber;
     }
 
     //Setters
     public void setId(@NonNull String id) { this.id = id; }
     public void setName(String name) { this.name = name; }
-    public void setOwners(ArrayList<String> owners) { this.owners = owners; }
+    public void setOwner(String owner) { this.owner = owner; }
     public void setWasCreated(String wasCreated) { this.wasCreated = wasCreated; }
-    public void setImagesNumber(String imagesNumber) { this.imagesNumber = imagesNumber; }
-    public void setImages(ArrayList<Image> images) { this.images = images; }
+    public void setImagesNumber(int imagesNumber) { this.imagesNumber = imagesNumber; }
+    public void setDeleted(boolean deleted) { isDeleted = deleted; }
+    public void setLastModify(String lastModify) { this.lastModify = lastModify; }
+    public void setSharable(boolean sharable) { isSharable = sharable; }
+    public void setLikesNumber(int likesNumber) { this.likesNumber = likesNumber; }
 
     //Getters
     @NonNull
     public String getId() { return id; }
     public String getName() { return name; }
-    public ArrayList<String> getOwners() { return owners; }
+    public String getOwner() { return owner; }
     public String getWasCreated() { return wasCreated; }
-    public String getImagesNumber() { return imagesNumber; }
-    public ArrayList<Image> getImages() { return images; }
+    public int getImagesNumber() { return imagesNumber; }
+    public boolean isDeleted() { return isDeleted; }
+    public String getLastModify() { return lastModify; }
+    public boolean isSharable() { return isSharable; }
+    public int getLikesNumber() { return likesNumber; }
+
+    public Map<String,Object> toMap(){
+        HashMap<String,Object> result = new HashMap<>();
+        result.put("id", id);
+        result.put("name", name);
+        result.put("owner", owner);
+        result.put("was_created", wasCreated);
+        result.put("images_number", imagesNumber);
+        result.put("is_deleted", isDeleted);
+        result.put("last_modify", lastModify);
+        result.put("is_sharable", isSharable);
+        result.put("likes", likesNumber);
+        return result;
+    }
 }

@@ -20,6 +20,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dk.blackhole.R;
+import com.dk.blackhole.models.user.User;
+import com.dk.blackhole.models.user.UserModelHelper;
+import com.dk.blackhole.utils.Utils;
+import com.dk.blackhole.viewModels.SignInActivityViewModel;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -34,32 +38,43 @@ import com.google.firebase.auth.UserInfo;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.squareup.picasso.Picasso;
 
+
+/**
+ * This activity:
+ *              *) Handle the signIn/out to the app.
+ *              *) Load user info and pass it to next activity.
+ *              *) If user doesn't exist in the DB it's ask the model to insert new user info to DB.
+ *
+ */
 public class SignInActivity extends AppCompatActivity {
 
     private final String TAG = SignInActivity.class.getSimpleName();
-    static final int GOOGLE_SIGN = 123;
+    public static final String INTENT_ACCOUNT_REQUESTS = "ACCOUNT";
+    public static final String SIGN_OUT_REQUEST = "SIGN_OUT";
+    private final int GOOGLE_SIGN = 123;
+
+    private TextView text;
+    private ImageView image;
     private EditText setNameET;
-    FirebaseAuth mAuth;
-    Button btn_login, btn_logout;
-    TextView text;
-    ImageView image;
-    ProgressBar progressBar;
-    GoogleSignInClient mGoogleSignInClient;
+    private FirebaseAuth mFireBaseAuth;
+    private FirebaseUser mFirebaseUser;
+    private ProgressBar progressBar;
+    private Button btn_login, btn_logout;
+    private SignInActivityViewModel mVM;
+    private GoogleSignInClient mGoogleSignInClient;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
 
-        btn_login = findViewById(R.id.login);
-        btn_logout = findViewById(R.id.logout);
-        text = findViewById(R.id.text);
-        image = findViewById(R.id.image);
-        progressBar = findViewById(R.id.progressCircular);
-        setNameET = findViewById(R.id.setNameET);
+        mVM = SignInActivityViewModel.getInstance();
+        initialUI();
         initEditTextPressedDone(setNameET);
 
-        mAuth = FirebaseAuth.getInstance();
+        mFireBaseAuth = FirebaseAuth.getInstance();
 
         GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions
                 .Builder()
@@ -68,15 +83,31 @@ public class SignInActivity extends AppCompatActivity {
                 .build();
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions);
-
+        handleRequestFromOtherActivity();
         btn_login.setOnClickListener(v->SignInGoogle());
         btn_logout.setOnClickListener(v->logOut());
 
-        if(mAuth.getCurrentUser() != null){
-
-            FirebaseUser user = mAuth.getCurrentUser();
-            updateUI(user);
+        if(mFireBaseAuth.getCurrentUser() != null){
+            mFirebaseUser = mFireBaseAuth.getCurrentUser();
+            updateUI();
         }
+    }
+
+
+    private void handleRequestFromOtherActivity() {
+        Intent intentFromOtherActivity = getIntent();
+        String massageFromOtherActivity = intentFromOtherActivity.getStringExtra(INTENT_ACCOUNT_REQUESTS);
+        if(massageFromOtherActivity != null && massageFromOtherActivity.equals(SIGN_OUT_REQUEST)){logOut();}
+    }
+
+
+    private void initialUI() {
+        btn_login = findViewById(R.id.login);
+        btn_logout = findViewById(R.id.logout);
+        text = findViewById(R.id.text);
+        image = findViewById(R.id.image);
+        progressBar = findViewById(R.id.progressCircular);
+        setNameET = findViewById(R.id.setNameET);
     }
 
 
@@ -104,49 +135,48 @@ public class SignInActivity extends AppCompatActivity {
                 if(account != null){ firebaseAuthWithGoogle(account); }
             }catch (ApiException e){ e.printStackTrace(); }
         }
+
     }
+
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
         Log.d(TAG, "firebaseAuthWithGoogle: " + account.getId());
 
         AuthCredential credential = GoogleAuthProvider
                 .getCredential(account.getIdToken(),null);
-        mAuth.signInWithCredential(credential)
+        mFireBaseAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, task ->{
                     if(task.isSuccessful()){
                         progressBar.setVisibility(View.INVISIBLE);
                         Log.d(TAG, "signIn success");
 
-                        FirebaseUser user = mAuth.getCurrentUser();
-                        updateUI(user);
+                        mFirebaseUser = mFireBaseAuth.getCurrentUser();
+                        updateUI();
                     }
                     else {
                         progressBar.setVisibility(View.INVISIBLE);
                         Log.d(TAG, "signIn failure" , task.getException());
 
                         Toast.makeText(this, "SignIn failed!", Toast.LENGTH_SHORT).show();
-                        updateUI(null);
+                        updateUI();
                     }
                     
                 });
     }
 
-    /**
-     *
-     * @param user
-     */
-    private void updateUI(FirebaseUser user) {
+
+    private void updateUI() {
 
 //
-            if (user != null) {
+            if (mFirebaseUser != null) {
                 // User is signed in
-                String displayName = user.getDisplayName();
-                String userEmail = user.getEmail();
-                Uri profileUri = user.getPhotoUrl();
+                String displayName = mFirebaseUser.getDisplayName();
+                String userEmail = mFirebaseUser.getEmail();
+                Uri profileUri = mFirebaseUser.getPhotoUrl();
 
                 // If the above were null, iterate the provider data
                 // and set with the first non null data
-                for (UserInfo userInfo : user.getProviderData()) {
+                for (UserInfo userInfo : mFirebaseUser.getProviderData()) {
                     if (displayName == null && userInfo.getDisplayName() != null) {
                         displayName = userInfo.getDisplayName();
                     }
@@ -160,7 +190,7 @@ public class SignInActivity extends AppCompatActivity {
                 if(displayName == null){ askUserForAName(); }//If the user don't have firebase user name we ask him/her for a name other way we just open next activity.
                 else {
                     setNameEmailImage(displayName, userEmail, profileUri);
-                    startHomeActivity();
+                    loadOrCreateUserInfoFromDB();
                 }
             btn_login.setVisibility(View.INVISIBLE);
             btn_logout.setVisibility(View.VISIBLE);
@@ -194,7 +224,7 @@ public class SignInActivity extends AppCompatActivity {
 
         FirebaseAuth.getInstance().signOut();
         mGoogleSignInClient.signOut()
-                .addOnCompleteListener(this,task -> updateUI(null));
+                .addOnCompleteListener(this,task -> updateUI());
     }
 
 
@@ -213,7 +243,7 @@ public class SignInActivity extends AppCompatActivity {
 
 
     /**
-     * Here we initialize edit text, so when the user finish to write his/ her name we open next activity
+     * Here we initialize edit text, so when the user finish to write his/ her name we open next activity.
      * @param editText - the text that hold the user name
      */
     private void initEditTextPressedDone( EditText editText) {
@@ -222,9 +252,9 @@ public class SignInActivity extends AppCompatActivity {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     editText.setVisibility(View.INVISIBLE);
-                    FirebaseUser user = mAuth.getCurrentUser();
+                    FirebaseUser user = mFireBaseAuth.getCurrentUser();
                     user.updateProfile(new UserProfileChangeRequest.Builder().setDisplayName(editText.getText().toString()).build());
-                    startHomeActivity();
+                    loadOrCreateUserInfoFromDB();
                     return false;
                 }
                 return false;
@@ -234,10 +264,46 @@ public class SignInActivity extends AppCompatActivity {
 
 
     /**
-     * Open HomeActivity
+     * This method first try to load the user by it email if its failure its mean that the user
+     * with this email doesn't exist so we need to create a new one.
      */
-    private void startHomeActivity(){
+    private void loadOrCreateUserInfoFromDB(){
+        mVM.getUserByEmail(mFirebaseUser.getEmail(), new UserModelHelper.listenerOnComplete<User>(){
+
+            @Override
+            public void onComplete(User userFromDB) {
+                if(userFromDB != null){
+                    userFromDB.setLastCheckedIn(Utils.getCurrentTime());//now this user hold the updated last checked in time.
+                    mVM.updateUser(userFromDB, new UserModelHelper.listenerOnComplete<User>() {
+                        @Override
+                        public void onComplete(User updatedUser) {
+                            if(updatedUser != null){startHomeActivity(updatedUser);}
+                            else{Log.e(TAG, "Problem with updating user last check in field");}
+                        }
+                    });
+
+                }
+                else{
+                    User newUser = new User(Utils.getNewUniqueId(),mFirebaseUser.getDisplayName(), mFirebaseUser.getEmail(), Utils.getCurrentTime(), Utils.getCurrentTime(), false);
+                    mVM.insertNewUserToDB(newUser, new UserModelHelper.listenerOnComplete<User>() {
+                        @Override
+                        public void onComplete(User userThatInserted) {
+                            if(userThatInserted == null){ Log.e(TAG, "User can't be inserted!!!");}
+                            else{startHomeActivity(userThatInserted);}
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    /**
+     * Open HomeActivity
+     * @param userFromDB
+     */
+    private void startHomeActivity(User userFromDB){
         Intent intent = new Intent(SignInActivity.this, HomeActivity.class);
+        intent.putExtra(HomeActivity.USER_FROM_DB, userFromDB);
         startActivity(intent);
         finish();
     }
@@ -251,7 +317,7 @@ public class SignInActivity extends AppCompatActivity {
 //
 //
 //
-//        FirebaseUser user = mAuth.getCurrentUser();
+//        FirebaseUser user = mFireBaseAuth.getCurrentUser();
 //        user.updateProfile(new UserProfileChangeRequest.Builder().setDisplayName("").build());
 //        String displayName = user.getDisplayName();
 //        String userEmail = user.getEmail();

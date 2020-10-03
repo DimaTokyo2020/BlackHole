@@ -25,16 +25,26 @@ import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.dk.blackhole.App;
+import com.dk.blackhole.models.album.Album;
+import com.dk.blackhole.viewModels.HomeActivityViewModel;
 import com.dk.blackhole.viwes.components.CustomViewPager;
 import com.dk.blackhole.viwes.HomeActivity;
 import com.dk.blackhole.viwes.components.OnSwipeTouchListenerVP;
 import com.dk.blackhole.R;
 import com.dk.blackhole.viwes.fragments.imagesFrags.ImagesListFragment;
 import com.dk.blackhole.models.image.Image;
-import com.dk.blackhole.models.image.ImagesModel;
+import com.dk.blackhole.models.image.ImagesModelHelper;
 import com.dk.blackhole.viewModels.ImagesListViewModel;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -46,11 +56,16 @@ public class AlbumsListFragment extends Fragment {
 
     private final String TAG = AlbumsListFragment.class.getSimpleName();
     private RecyclerView mRecyclerListView;
-    private List<Image> mData  = new ArrayList<>();//to prevent null EXCEPTION
+    private List<Album> mData  = new ArrayList<>();//to prevent null EXCEPTION
+    private List<Image> mDataImagesList  = new ArrayList<>();//to prevent null EXCEPTION
     private AlbumsListAdapter adapter;
     private Context mContext;
-    private ImagesListViewModel mVM;
-    private LiveData<List<Image>> liveData;
+    private HomeActivityViewModel mVM;
+    private LiveData<List<Album>> liveData;
+    private LiveData<List<Image>> liveDataUserImages;
+    private View mView;
+    private Observer<List<Album>> dataLiveObserverAlbums;
+    private Observer<List<Image>> dataLiveObserverImages;
 
     //ViewPager helper
     private CustomViewPager mCurrentViewPager;
@@ -59,46 +74,14 @@ public class AlbumsListFragment extends Fragment {
     private int mLastOffsetScreenPosition;
     //
 
-    private String[] imageUrls = new String[]{
-            "https://cdn.pixabay.com/photo/2016/11/11/23/34/cat-1817970_960_720.jpg",
-            "https://cdn.pixabay.com/photo/2017/12/21/12/26/glowworm-3031704_960_720.jpg",
-            "https://cdn.pixabay.com/photo/2017/12/24/09/09/road-3036620_960_720.jpg",
-            "https://cdn.pixabay.com/photo/2017/11/07/00/07/fantasy-2925250_960_720.jpg",
-            "https://cdn.pixabay.com/photo/2017/10/10/15/28/butterfly-2837589_960_720.jpg"
-    };
+    private Delegate parent;
 
-
-//    public interface Delegate{
-//        void onItemSelected(Image image);
-//    }
-
-
-    private ImagesListFragment.Delegate parent;
-    private View mView;
-
-
-
-    public AlbumsListFragment() {
-        liveData = ImagesModel.instance.getAllImages();
-
-        if(adapter != null){
-            adapter.notifyDataSetChanged();//refresh the page with new data
-        }
-
+    public interface Delegate{
+        void onItemSelected(Album albums);
     }
 
-    /*
-    public ImagesListFragment() {
-        Model.instance.getAllImages(new Model.Listener<List<Image>>() {
-            @Override
-            public void onComplete(List<Image> _data) {
-                data = _data;
-                if (adapter != null){
-                    adapter.notifyDataSetChanged();
-                }
-            }
-        });
-    }*/
+
+    public AlbumsListFragment() { }
 
 
     @Override
@@ -106,15 +89,6 @@ public class AlbumsListFragment extends Fragment {
                              Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_albums_list, container, false);
         Objects.requireNonNull(mContext = getContext());
-        // Inflate the layout for this fragment
-        //liveData = mVM.getData();
-        liveData.observe(getViewLifecycleOwner(), new Observer<List<Image>>() {
-            @Override
-            public void onChanged(List<Image> images) {//new data notification
-                mData = images;
-                adapter.notifyDataSetChanged();//refresh the page with new data
-            }
-        });
 
         adapter = new AlbumsListFragment.AlbumsListAdapter();
         LinearLayoutManager layoutManager = new LinearLayoutManager(mContext);
@@ -122,8 +96,6 @@ public class AlbumsListFragment extends Fragment {
         mRecyclerListView.setHasFixedSize(true);
         mRecyclerListView.setLayoutManager(layoutManager);
         mRecyclerListView.setAdapter(adapter);
-
-
 
         //next 3 lines give space between the items in the recyclerView
         DividerItemDecoration itemDecorator = new DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL);
@@ -146,8 +118,8 @@ public class AlbumsListFragment extends Fragment {
             @Override
             public void onClick(int position) {
                 Log.d("TAG","row was clicked" + position);
-                Image image = mData.get(position);
-                parent.onItemSelected(image);
+                Album album = mData.get(position);
+                parent.onItemSelected(album);
             }
         });
 
@@ -156,18 +128,79 @@ public class AlbumsListFragment extends Fragment {
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                mVM.refresh(new ImagesModel.CompleteListener() {
-                    @Override
-                    public void onComplete() {
-                        swipeRefresh.setRefreshing(false);//stop the swipe spinner
-                    }
-                });
+                Log.i(TAG, "OnRefresh");
+                liveData = ((HomeActivity)getActivity()).getUserAlbums();
+                liveData.removeObserver(dataLiveObserverAlbums);
+                liveData.observe(getViewLifecycleOwner(),dataLiveObserverAlbums);
+                String[] albumsIdes = ((HomeActivity)getActivity()).getUsersAlbumsIdes();
+                liveDataUserImages = ImagesModelHelper.getInstance().getUserImages(albumsIdes);
+                liveDataUserImages.removeObserver(dataLiveObserverImages);
+                liveDataUserImages.observe(getViewLifecycleOwner(),dataLiveObserverImages);
+
+                swipeRefresh.setRefreshing(false);
+//                new ImagesModelHelper.CompleteListener() {
+//                    @Override
+//                    public void onComplete() {
+//                        swipeRefresh.setRefreshing(false);//stop the swipe spinner
+//                    }
+//                });
             }
         });
 
+        /* add to the toolbar icon if an option to create new album*/
+//        ((HomeActivity)getActivity()).addOptionToCreateNewAlbum(()->openFragmentForCreatingNewAlbum());
+
+
+
+        liveData = ((HomeActivity)getActivity()).getUserAlbums();
+        String[] albumsIdes = ((HomeActivity)getActivity()).getUsersAlbumsIdes();
+        liveDataUserImages = ImagesModelHelper.getInstance().getUserImages(albumsIdes);
+
+
+        // Inflate the layout for this fragment
+        //liveData = mVM.getData();
+        dataLiveObserverAlbums = new Observer<List<Album>>() {
+            @Override
+            public void onChanged(List<Album> albums) {//new data notification
+                mData = albums;
+                Log.i(TAG, "notifyDataSetChanged albums size: " + mData.size());
+                adapter.notifyDataSetChanged();//refresh the page with new data
+            }
+        };
+        liveData.observe(getViewLifecycleOwner(), dataLiveObserverAlbums);
+
+        dataLiveObserverImages = new Observer<List<Image>>() {
+            @Override
+            public void onChanged(List<Image> image) {//new data notification
+                mDataImagesList = image;
+                Log.i(TAG,"notifyDataSetChanged image size: " + image.size());
+                adapter.notifyDataSetChanged();//refresh the page with new data
+            }
+        };
+
+        liveDataUserImages.observe(getViewLifecycleOwner(), dataLiveObserverImages);
+
+
+        if(adapter != null){
+            adapter.notifyDataSetChanged();//refresh the page with new data
+        }
         return mView;
     }
 
+    private void openFragmentForCreatingNewAlbum() {
+        Toast.makeText(mContext, "openFrrrr", Toast.LENGTH_SHORT).show();
+    }
+
+    private void likeButtonPressed(String albumId, boolean isChecked){
+        ((HomeActivity)getActivity()).likeButtonPressed(albumId, isChecked);
+    }
+
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ((HomeActivity)getActivity()).closeOptionToCreateNewAlbum();
+    }
 
     private int getScreenPosition(){return mRecyclerListView.computeVerticalScrollOffset();}
 
@@ -175,13 +208,14 @@ public class AlbumsListFragment extends Fragment {
     public void onAttach(@NonNull Context context) {//calls once
         super.onAttach(context);
         if(context instanceof ImagesListFragment.Delegate){
-            parent = (ImagesListFragment.Delegate)getActivity();
+//            parent = (ImagesListFragment.Delegate)getActivity();
         }else{
             throw new  RuntimeException(context.toString() + "must implement Delegate");
         }
 
 
-        mVM = new ViewModelProvider(this). get(ImagesListViewModel.class);
+
+        mVM = new ViewModelProvider(this). get(HomeActivityViewModel.class);
     }
 
 
@@ -196,10 +230,13 @@ public class AlbumsListFragment extends Fragment {
 
 
       class AlbumRowViewHolder extends RecyclerView.ViewHolder{
-        TextView name;
+        TextView nameTV;
         TextView id;
-        CheckBox cb;
-        Image image;
+        TextView imagesNumber;
+        TextView dateTV;
+        TextView likesNumberTV;
+        Album album;
+        CheckBox likesCB;
         ImageView imageIV;
         CustomViewPager mViewPager;
         ImageButton  mMinimizeViewPagerBTN;
@@ -207,19 +244,17 @@ public class AlbumsListFragment extends Fragment {
 
         private AlbumRowViewHolder(@NonNull View itemView, final AlbumsListFragment.OnItemClickListener listener) {
             super(itemView);
-            name = itemView.findViewById(R.id.row_name_tv);
-            id = itemView.findViewById(R.id.row_id_tv);
-            cb = itemView.findViewById(R.id.row_cb);
+            nameTV = itemView.findViewById(R.id.albumName);
+            dateTV = itemView.findViewById(R.id.date_album_row);
+            likesNumberTV = itemView.findViewById(R.id.likes_number_row);
+            imagesNumber = itemView.findViewById(R.id.images_num_in_album_row);
             imageIV = itemView.findViewById(R.id.row_image);
             mViewPager = itemView.findViewById(R.id.viewPager2);
             mMinimizeViewPagerBTN = itemView.findViewById(R.id.minimizeViewPagerBTN);
+            likesCB = itemView.findViewById(R.id.likes_check_box);
 
 
-            cb.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) { image.setIsChecked(cb.isChecked());
-                }
-            });
+
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -242,19 +277,43 @@ public class AlbumsListFragment extends Fragment {
 
         }
 
-        private void bind(Image st, int i) {
-//            name.setText(st.getName());
-//            id.setText(st.getId());
-            cb.setChecked(st.getIsChecked());
-            image = st;
+        private void bind(Album st, int i, String[] imagesUrls) {
+
+
+            String date = st.getWasCreated();
+            String[] dateSpited = date.split("a");
+            date = dateSpited[0];
+            dateTV.setText(date);
+            nameTV.setText(st.getName());
+            imagesNumber.setText(""+st.getImagesNumber());
+            likesNumberTV.setText(""+st.getLikesNumber());
+            album = st;
+
+//            likesCB.setOnClickListener(v->likeButtonPressed(mData.get(i).getId(), likesCB.isChecked()));
+            likesCB.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(true ==likesCB.isChecked()){
+                        likesCB.setChecked(true);
+                        likeButtonPressed(album.getId(), true);
+                        Log.i(TAG, "liked: " + album.getId());
+                    }
+                    else{
+                        likesCB.setChecked(false);
+                        likeButtonPressed(album.getId(), false);
+                        Log.i(TAG, "Desliked: " + album.getId());
+                    }
+                }
+            });
+
 //            if (bars.get(position).isWatched()) {
 //                holder.thumbnailView.setVisibility(View.GONE);
 //            } else {
 //                holder.thumbnailView.setVisibility(View.VISIBLE);
 //            }
 
-            Log.i(TAG, "inside bind");
-            initPagerViewer(mViewPager,mMinimizeViewPagerBTN,i);
+                    Log.i(TAG, "inside bind");
+            initPagerViewer(mViewPager,mMinimizeViewPagerBTN,imagesUrls);
         }
     }
 
@@ -287,8 +346,20 @@ public class AlbumsListFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull AlbumsListFragment.AlbumRowViewHolder imageRowViewHolder, int i) {
             Log.i(TAG, "onBindViewHolder");
-            Image st = mData.get(i);
-            imageRowViewHolder.bind(st, i);
+
+            Album st = mData.get(i);
+            ArrayList<String> imagesUrls = new ArrayList<>();
+            for(Image image : mDataImagesList){
+                if(image.getAlbumId().equals(st.getId())){
+                    imagesUrls.add(image.getImgUrl());
+                }
+            }
+            String[] imagesUrlss = new String[imagesUrls.size()];
+            for(int j = 0; j < imagesUrls.size(); j++){
+                imagesUrlss[j] = imagesUrls.get(j);
+            }
+
+            imageRowViewHolder.bind(st, i, imagesUrlss);
 
 
         }
@@ -300,7 +371,7 @@ public class AlbumsListFragment extends Fragment {
     }
 
 
-    private void initPagerViewer(CustomViewPager viewPager, ImageButton closePagerViewBT, int i){
+    private void initPagerViewer(CustomViewPager viewPager, ImageButton closePagerViewBT, String[] imagesUrls){
 
 
 //ViewPager  //imageSlider
@@ -312,7 +383,9 @@ public class AlbumsListFragment extends Fragment {
 
 
 
-        ViewPagerAdapter adapter = new ViewPagerAdapter(App.context , imageUrls);
+
+        ViewPagerAdapter adapter = new ViewPagerAdapter(App.context , imagesUrls);
+
         viewPager.setAdapter(adapter);
         setViewPagerOnTouchListener(viewPager, closePagerViewBT);
 

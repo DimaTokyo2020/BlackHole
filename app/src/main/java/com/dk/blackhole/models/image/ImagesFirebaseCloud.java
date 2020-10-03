@@ -6,7 +6,6 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.dk.blackhole.models.album.Album;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -30,24 +29,24 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
 
-public class ModelFirebase {
+public class ImagesFirebaseCloud {
 
-    private final String TAG = ModelFirebase.class.getSimpleName();
+    private final String TAG = ImagesFirebaseCloud.class.getSimpleName();
+    private final String COLLECTION_PATH = "Images";
     private FirebaseFirestore mDB;
     ListenerRegistration mListenerRegistration;
+    private static ImagesFirebaseCloud instance;
 
 
+    private ImagesFirebaseCloud() {mDB = FirebaseFirestore.getInstance();}
 
-    public ModelFirebase() {
-
-        mDB = FirebaseFirestore.getInstance();
-
+    public static ImagesFirebaseCloud getInstance() {
+        if(instance == null ){instance = new ImagesFirebaseCloud();}
+        return instance;
     }
 
-    public void getAllImages(ImagesModel.Listener<List<Image>> listener){
+    public void getAllImages(ImagesModelHelper.Listener<List<Image>> listener){
 
 
 
@@ -73,7 +72,8 @@ public class ModelFirebase {
             }
         });
     }
-
+//    a5bedd76-b739-4ae5-a5a2-cf41dc459100
+//    879e9f61-7e1a-4a65-a78e-cada3b59a445
     public void testCreate() {
         // Create a new user with a first and last name
         Map<String, Object> user = new HashMap<>();
@@ -119,11 +119,6 @@ public class ModelFirebase {
         mDB.collection("dataTypes").add(docData);
     }
 
-    public void classAdd() {
-        String newUniqueId = getNewUniqueId();
-            Image image = new Image(newUniqueId, "dima" , "" + 3,"dima","dima", true ,545.9,true);
-            mDB.collection("images").document(newUniqueId).set(image);
-    }
 
     public void updateDocument() {
 
@@ -197,10 +192,10 @@ public class ModelFirebase {
      * Get all images from firebase.
      * @param listener finally push it to the listener.
      */
-    public void getMultipleDocuments(ImagesModel.Listener<List<Image>> listener){
+    public void getUserImages(String userId, ImagesModelHelper.Listener<List<Image>> listener){
 
-//after collection can be add where!
-        mDB.collection("images").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        mDB.collection(COLLECTION_PATH).whereEqualTo("owner", userId).get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
@@ -302,9 +297,9 @@ public class ModelFirebase {
 
     }
 
-    private String getNewUniqueId(){return UUID.randomUUID().toString();}//random
 
-    public void getAllUserAlbums(ImagesModel.Listener<List<Image>> listener){
+
+    public void getAllUserAlbums(ImagesModelHelper.Listener<List<Image>> listener){
 
         //after collection can be add where!
         mDB.collection("albums").whereArrayContains("owners" , "max").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -330,68 +325,68 @@ public class ModelFirebase {
 
 
     //For Test
-    public void createFakeAlbums(){
-//        String newUniqueId = getNewUniqueId();
-        ArrayList<Image> fakeImages = new ArrayList<>();
-        ArrayList<Album> fakeAlbums = new ArrayList<>();
-        String[] owners ={"max", "sergey" , "dima"};
-        Random random = new Random();
+//    public void createFakeAlbums(){
+////        String newUniqueId = getNewUniqueId();
+////        ArrayList<Image> fakeImages = new ArrayList<>();
+////        ArrayList<Album> fakeAlbums = new ArrayList<>();
+////        String[] owners ={"max", "sergey" , "dima"};
+////        Random random = new Random();
+////
+////
+////
+////        for (int i = 0; i < 2; i++) {
+////            fakeImages.add(new Image(DBUtils.getNewUniqueId(), "fakeImage-" + (i + 1), "fake-" + (i + 1), "fake-" + (i + 1),
+////                    "fake-" + (i + 1), true, (i + 1), true));
+//        }
+//
+////        for(int j = 0; j < 2; j++) {
+////            ArrayList<String> owner = new ArrayList<>();
+////            owner.add(owners[random.nextInt(3)]);
+////            fakeAlbums.add(new Album(DBUtils.getNewUniqueId(), "fakeAlbum-" + (j+1), owner,
+////                    "fakeAlbum-" + (j+1),"fakeAlbum-" + (j+1),fakeImages));
+////        }
+//
+//        for(int k = 0; k < fakeAlbums.size(); k++){
+//            mDB.collection("albums").document(fakeAlbums.get(k).getId()).set(fakeAlbums.get(k)).addOnFailureListener(new OnFailureListener() {
+//                @Override
+//                public void onFailure(@NonNull Exception e) {
+//                    Log.i("dimaa", e.getMessage());
+//                }
+//            }).addOnSuccessListener(new OnSuccessListener<Void>() {
+//                @Override
+//                public void onSuccess(Void aVoid) {
+//                    Log.i("dimaa", "yeaaa!!");
+//                }
+//            }).addOnCompleteListener(new OnCompleteListener<Void>() {
+//                @Override
+//                public void onComplete(@NonNull Task<Void> task) {
+//                    Log.i("dimaa", "yhthgeaaa!!");
+//                }
+//            });}
+//
+//    }
 
-
-
-        for (int i = 0; i < 2; i++) {
-            fakeImages.add(new Image(getNewUniqueId(), "fakeImage-" + (i + 1), "fake-" + (i + 1), "fake-" + (i + 1),
-                    "fake-" + (i + 1), true, (i + 1), true));
-        }
-
-        for(int j = 0; j < 2; j++) {
-            ArrayList<String> owner = new ArrayList<>();
-            owner.add(owners[random.nextInt(3)]);
-            fakeAlbums.add(new Album(getNewUniqueId(), "fakeAlbum-" + (j+1), owner,
-                    "fakeAlbum-" + (j+1),"fakeAlbum-" + (j+1),fakeImages));
-        }
-
-        for(int k = 0; k < fakeAlbums.size(); k++){
-            mDB.collection("albums").document(fakeAlbums.get(k).getId()).set(fakeAlbums.get(k)).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.i("dimaa", e.getMessage());
-                }
-            }).addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void aVoid) {
-                    Log.i("dimaa", "yeaaa!!");
-                }
-            }).addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    Log.i("dimaa", "yhthgeaaa!!");
-                }
-            });}
-
-    }
-
-    public void insertAlbum(){
-
-        Album album = new Album();
-//        Image image = new Image();
-//        mDB.collection("images").document(newUniqueId).set(image);
-        mDB.collection("images").document("gfgfg").set(album).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.i("dimaa", e.getMessage());
-            }
-        }).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Log.i("dimaa", "yeaaa!!");
-            }
-        }).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                Log.i("dimaa", "yhthgeaaa!!");
-            }
-        });}
+//    public void insertAlbum(){
+//
+//        Album album = new Album();
+////        Image image = new Image();
+////        mDB.collection("images").document(newUniqueId).set(image);
+//        mDB.collection("images").document("gfgfg").set(album).addOnFailureListener(new OnFailureListener() {
+//            @Override
+//            public void onFailure(@NonNull Exception e) {
+//                Log.i("dimaa", e.getMessage());
+//            }
+//        }).addOnSuccessListener(new OnSuccessListener<Void>() {
+//            @Override
+//            public void onSuccess(Void aVoid) {
+//                Log.i("dimaa", "yeaaa!!");
+//            }
+//        }).addOnCompleteListener(new OnCompleteListener<Void>() {
+//            @Override
+//            public void onComplete(@NonNull Task<Void> task) {
+//                Log.i("dimaa", "yhthgeaaa!!");
+//            }
+//        });}
 
 
     public void getCustomObject2(){
@@ -408,6 +403,82 @@ public class ModelFirebase {
         });
     }
 
+    public void addNewImage(Image imageInfo, ImagesModelHelper.CompleteListener completeListener) {
+        mDB.collection(COLLECTION_PATH).document(imageInfo.getId()).set(imageInfo)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        completeListener.onComplete();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e(TAG, "Failed to upload image");
+                    }
+                });
+    }
+
+
+    public void getImagesNumberInAlbum(String albumId, ImagesModelHelper.Listener<Integer> integerListener) {
+        mDB.collection(COLLECTION_PATH).whereEqualTo("albumId", albumId).get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                        int imagesNumberInAlbum = 0;
+                        if(task.isSuccessful()){
+                            for(DocumentSnapshot document : task.getResult()){
+//                                document.exists();//maybe needed for prevent exceptions
+                                Image image  = document.toObject(Image.class);
+                                if(false == image.isDeleted()) {
+                                    imagesNumberInAlbum ++;
+                                }
+                            }
+                        }
+                        else{
+                            Log.i(TAG, "Error getting documents: " , task.getException());
+                        }
+                        integerListener.onComplete(imagesNumberInAlbum);
+                    }
+                });
+    }
+
+
+    public void getUserImagesByAlbumsIdes(String[] albumsIdes, ImagesModelHelper.Listener<List<Image>> listListener) {
+        /* We cant use "whereIn" with more then 10 elements so we separate the requests */
+        List<String> albumsIdesArray = Arrays.asList(albumsIdes);
+        int numberOfRequestNeeded = albumsIdes.length / 10;
+
+        for(int i = 0; i <= numberOfRequestNeeded; i++) {
+            List<String> subArray;
+            if(i != numberOfRequestNeeded) {
+                subArray = albumsIdesArray.subList(0 + (10 * i), 10 + (10 * i));
+            }
+            else{
+                subArray = albumsIdesArray.subList(0 + (10 * i), albumsIdes.length);
+            }
+            if (subArray.size() != 0 && false == subArray.get(0).equals("")) {
+                mDB.collection(COLLECTION_PATH).whereIn("albumId", subArray).get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                                ArrayList<Image> images = new ArrayList<>();
+                                if (task.isSuccessful()) {
+                                    for (DocumentSnapshot document : task.getResult()) {
+                                        Image image = document.toObject(Image.class);
+                                        images.add(image);
+                                    }
+                                } else {
+                                    Log.i(TAG, "Error getting documents: ", task.getException());
+                                }
+                                listListener.onComplete(images);
+                            }
+                        });
+            }
+        }
+    }
 }
 
 

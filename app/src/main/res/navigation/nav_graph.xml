@@ -48,7 +48,11 @@
         android:id="@+id/cameraFragment"
         android:name="com.dk.blackhole.viwes.fragments.CameraFragment"
         android:label="fragment_camera"
-        tools:layout="@layout/fragment_camera" />
+        tools:layout="@layout/fragment_camera" >
+        <argument
+            android:name="user"
+            app:argType="com.dk.blackhole.models.user.User" />
+    </fragment>
     <action android:id="@+id/action_global_cameraFragment" app:destination="@id/cameraFragment" />
     <fragment
         android:id="@+id/albumsListFragment"

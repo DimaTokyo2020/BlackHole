@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.viewpager.widget.PagerAdapter;
 
+import com.dk.blackhole.viwes.components.RoundedTransformation;
 import com.squareup.picasso.Picasso;
 
 public class ViewPagerAdapter extends PagerAdapter {
@@ -39,7 +40,10 @@ public class ViewPagerAdapter extends PagerAdapter {
                 .load(imageUrls[position])
                 .fit()
                 .centerCrop()
+                .transform(new RoundedTransformation(75, 0))
                 .into(imageView);
+
+
 
         container.addView(imageView);
         return imageView;

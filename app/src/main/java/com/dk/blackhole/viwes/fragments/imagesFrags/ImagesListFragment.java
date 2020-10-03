@@ -25,7 +25,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.dk.blackhole.viewModels.ImagesListViewModel;
 import com.dk.blackhole.R;
 import com.dk.blackhole.models.image.Image;
-import com.dk.blackhole.models.image.ImagesModel;
+import com.dk.blackhole.models.image.ImagesModelHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +49,7 @@ public class ImagesListFragment extends Fragment {
 
 
     public ImagesListFragment() {
-        liveData = ImagesModel.instance.getAllImages();
+        liveData = ImagesModelHelper.getInstance().getAllImages("dsds");
 
         if(adapter != null){
             adapter.notifyDataSetChanged();//refresh the page with new data
@@ -121,7 +121,7 @@ public class ImagesListFragment extends Fragment {
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                mVM.refresh(new ImagesModel.CompleteListener() {
+                mVM.refresh(new ImagesModelHelper.CompleteListener() {
                     @Override
                     public void onComplete() {
                         swipeRefresh.setRefreshing(false);//stop the swipe spinner
@@ -168,11 +168,11 @@ public class ImagesListFragment extends Fragment {
             id = itemView.findViewById(R.id.row_id_tv);
             cb = itemView.findViewById(R.id.row_cb);
             imageIV = itemView.findViewById(R.id.row_image);
-            cb.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) { image.setIsChecked(cb.isChecked());
-                }
-            });
+//            cb.setOnClickListener(new View.OnClickListener() {
+//                @Override
+////                public void onClick(View v) { image.setIsChecked(cb.isChecked());
+//                }
+//            });
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -191,7 +191,7 @@ public class ImagesListFragment extends Fragment {
         private void bind(Image st) {
             name.setText(st.getName());
             id.setText(st.getId());
-            cb.setChecked(st.getIsChecked());
+//            cb.setChecked(st.getIsChecked());
             image = st;
         }
     }

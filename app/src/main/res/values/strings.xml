@@ -13,6 +13,11 @@
     <string name="login_with_google">Login with google</string>
     <string name="logout_with_google">logout_with_google</string>
     <string name="show_all_albums">Show all albums</string>
+    <string name="Upload">Upload</string>
+    <string name="Retake">Retake</string>
+    <string name="Delete">Delete</string>
+    <string name="Cancel">Cancel</string>
+    <string name="Relocate">ReLocate</string>
 
 
 </resources>

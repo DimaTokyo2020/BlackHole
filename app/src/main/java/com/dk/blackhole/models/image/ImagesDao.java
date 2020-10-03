@@ -7,7 +7,11 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
+import com.dk.blackhole.models.user.User;
+
 import java.util.List;
+
+import javax.annotation.meta.When;
 
 /**
  * DAO - Data Access Object
@@ -19,16 +23,23 @@ import java.util.List;
 
 
 @Dao
-public interface AlbumsAndImagesDao {
+public interface ImagesDao {
+    /*When we are using LiveData we automatically get update that a new data arrive.
+    So when we refresh the data by new request to firebase we just update the local db and the local db update as. */
     @Query("select * from Image")
-    LiveData<List<Image>> getAll();//When we are using LiveData we automatically get update that a new data arrive.
-                                  // So when we refresh the data by new request to firebase we just update the local db and the local db update as.
+    LiveData<List<Image>> getAll();
+
+//    @Insert(onConflict = OnConflictStrategy.REPLACE)
+//    void insertAll(Image... Images);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertAll(Image... Images);
+    public void insertNewImage(Image image);
 
-    @Query("SELECT * FROM Image WHERE name IN (:userIds)")
-    List<Image> loadAllByIds(int[] userIds);
+    @Query("SELECT * FROM Image WHERE albumId IN (:albumId)")
+    LiveData<List<Image>> getImagesByAlbumsIdes(String[] albumId);
+
+    @Query("SELECT * FROM Image WHERE owner == :userId")
+    LiveData<List<Image>> getImagesByUserId(String userId);
 
     @Delete
     void delete(Image Image);

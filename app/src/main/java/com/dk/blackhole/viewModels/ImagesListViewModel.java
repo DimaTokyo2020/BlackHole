@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.dk.blackhole.models.image.Image;
-import com.dk.blackhole.models.image.ImagesModel;
+import com.dk.blackhole.models.image.ImagesModelHelper;
 
 import java.util.HashMap;
 import java.util.List;
@@ -27,15 +27,15 @@ public class ImagesListViewModel extends ViewModel {
     public  LiveData<List<Image>> getImagesOfAlbum(String album){
 
         if(liveDataAllImages == null){
-            liveDataAllImages = ImagesModel.instance.getUserAllImages();
+            liveDataAllImages = ImagesModelHelper.getInstance().getUserAllImages();
 
         }
 
         return liveDataAllImages.getValue().get(album);
     }
 
-    public void refresh(ImagesModel.CompleteListener listener) {
-        ImagesModel.instance.refreshImageList(listener);
+    public void refresh(ImagesModelHelper.CompleteListener listener) {
+        ImagesModelHelper.getInstance().refreshImageList("dsdsd", listener);
     }
 
 

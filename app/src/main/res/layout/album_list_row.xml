@@ -4,59 +4,147 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:background="@drawable/item_shadow">
+    android:background="@drawable/item_shadow"
+    android:orientation="horizontal">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+
+        android:id="@+id/profile_image"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        android:padding="5dp"
+        android:src="@drawable/background_for_blackhole"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/row_name_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_marginStart="5dp"
+        android:text="Dmitry Kroytor"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profile_image" />
+
+    <TextView
+        android:id="@+id/albumName"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="10dp"
+        android:text="Best Party"
+        android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@+id/profile_image"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/date_album_row"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_marginStart="5dp"
+        android:text="15.9.2020"
+        app:layout_constraintStart_toEndOf="@+id/profile_image"
+        app:layout_constraintTop_toBottomOf="@+id/albumName" />
 
 
-    <LinearLayout
-        android:id="@+id/linearLayout2"
+    <CheckBox
+        android:id="@+id/likes_check_box"
+        android:layout_width="@dimen/button_width"
+        android:layout_height="@dimen/button_height"
+        android:layout_marginEnd="60dp"
+        android:layout_marginBottom="5dp"
+        android:button="@drawable/checkbox_selector"
+        app:layout_constraintBottom_toTopOf="@+id/comments_btn"
+        app:layout_constraintEnd_toStartOf="@+id/comments_btn6" />
+
+    <TextView
+        android:id="@+id/likes_number_row"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="5dp"
+        android:text="5"
+        app:layout_constraintBottom_toTopOf="@+id/comments_btn"
+        app:layout_constraintEnd_toStartOf="@+id/likes_check_box" />
 
-        <CheckBox
-            android:id="@+id/row_cb"
-            android:layout_width="@dimen/button_width"
-            android:layout_height="@dimen/button_height"
-            android:button="@drawable/checkbox_selector" />
+    <ImageButton
+        android:id="@+id/comments_btn"
+        android:layout_width="@dimen/button_width"
+        android:layout_height="@dimen/button_height"
+        android:layout_marginEnd="60dp"
+        android:layout_marginBottom="5dp"
+        android:background="?android:selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_button_comments"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/comments_btn5" />
 
-        <ImageButton
-            android:id="@+id/comments_btn"
-            android:layout_width="@dimen/button_width"
-            android:layout_height="@dimen/button_height"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="5dp"
-            android:background="?android:selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_button_comments"
-            app:layout_constraintEnd_toStartOf="@+id/info_btn"
-            app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:id="@+id/row_name_tv5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="5dp"
+        android:text="9"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/comments_btn" />
 
-        <ImageButton
-            android:id="@+id/info_btn"
-            android:layout_width="@dimen/button_width"
-            android:layout_height="@dimen/button_height"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="5dp"
-            android:background="?android:selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_button_info"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+    <ImageButton
+        android:id="@+id/comments_btn5"
+        android:layout_width="@dimen/button_width"
+        android:layout_height="@dimen/button_height"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="5dp"
+        android:background="?android:selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_baseline_people_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/viewPager2" />
 
-    </LinearLayout>
+    <TextView
+        android:id="@+id/row_name_tv6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="5dp"
+        android:text="3"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/comments_btn5" />
+
+    <ImageButton
+        android:id="@+id/comments_btn6"
+        android:layout_width="@dimen/button_width"
+        android:layout_height="@dimen/button_height"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="5dp"
+        android:background="?android:selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_image"
+        app:layout_constraintBottom_toTopOf="@+id/comments_btn5"
+        app:layout_constraintEnd_toStartOf="@+id/viewPager2" />
+
+    <TextView
+        android:id="@+id/images_num_in_album_row"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="5dp"
+        android:text="50"
+        app:layout_constraintBottom_toTopOf="@+id/comments_btn5"
+        app:layout_constraintEnd_toStartOf="@+id/comments_btn6" />
 
     <com.dk.blackhole.viwes.components.CustomViewPager
         android:id="@+id/viewPager2"
         android:layout_width="match_parent"
         android:layout_height="180dp"
         android:layout_alignParentEnd="true"
-        android:layout_marginStart="220dp"
+        android:layout_marginStart="200dp"
+        android:layout_marginEnd="-300dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/linearLayout2"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginEnd="-300dp"/>
+        app:layout_constraintVertical_bias="0.0" />
 
     <ImageButton
-        android:focusable="true"
         android:id="@+id/minimizeViewPagerBTN"
         android:layout_width="@dimen/button_width"
         android:layout_height="@dimen/button_height"
@@ -65,11 +153,9 @@
         android:layout_marginTop="10dp"
         android:layout_marginEnd="35dp"
         android:background="?android:selectableItemBackgroundBorderless"
-        android:visibility="invisible"
-        android:src="@drawable/ic_close_black_24dp" />
-
-
-
+        android:focusable="true"
+        android:src="@drawable/ic_close_black_24dp"
+        android:visibility="invisible" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,37 +7,34 @@
     android:padding="5dp">
 
 
-<!--
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="400dp"
-        android:text="copy"
-        android:onClick="copyThat"/>
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="200dp"
-        android:text="download from usb"
-        android:onClick="downloadFromUsb"/>
--->
-
     <Button
         android:id="@+id/takeImageButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
         android:layout_marginStart="1dp"
-        android:layout_marginTop="200dp"
+        android:layout_marginTop="50dp"
         android:text="@string/camera" />
+
+    <Button
+        android:id="@+id/testBTN"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/takeImageButton"
+        android:layout_marginTop="50dp"
+        android:text="Testing button" />
+
+
 
     <Button
         android:id="@+id/openImageListFragmentBTN"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/testBTN"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="350dp"
+        android:layout_marginTop="50dp"
         android:text="@string/show_all_images" />
-
 
     <Button
         android:id="@+id/openAlbumsListFragmentBTN"
@@ -47,6 +44,16 @@
         android:layout_alignParentStart="true"
         android:layout_marginTop="50dp"
         android:text="@string/show_all_albums" />
+    <Button
+        android:id="@+id/test2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/openAlbumsListFragmentBTN"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="50dp"
+        android:text="test2" />
+
+
 
 
     <ImageView
@@ -55,27 +62,5 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="41dp"
         android:contentDescription="@string/image" />
-
-
-    <com.dk.blackhole.viwes.components.CustomViewPager
-        android:id="@+id/viewPager"
-        android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="300dp"
-        android:layout_marginEnd="-300dp"/>
-
-    <ImageButton
-        android:focusable="true"
-        android:id="@+id/closeViewPagerBT"
-        android:layout_width="@dimen/button_width"
-        android:layout_height="@dimen/button_height"
-        android:layout_alignParentEnd="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="35dp"
-        android:background="?android:selectableItemBackgroundBorderless"
-        android:src="@drawable/ic_close_black_24dp" />
-
 
 </RelativeLayout>

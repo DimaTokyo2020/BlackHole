@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".viwes.fragments.albumsFrags.AlbumsListFragment"
+    android:background="@drawable/baclgroud_recyclerview"
     android:padding="10dp">
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
